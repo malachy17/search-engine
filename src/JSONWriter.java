@@ -1,8 +1,5 @@
-import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -30,20 +27,26 @@ public class JSONWriter {
     	try (BufferedWriter writer = Files.newBufferedWriter(outFile, Charset.forName("UTF-8"));) {
         	writer.write("{" + END);
         	
+        	int count1 = 1;
+        	int size1 = index.getWordSet().size();
         	for (String word : index.getWordSet()) {
-        		writer.write(tab(1) + word + ": {" + END);
+        		writer.write(tab(1) + quote(word) + ": {" + END);
         		
+        		int count2 = 1;
+        		int size2 = index.getFileSet(word).size();
         		for (String file : index.getFileSet(word)) {
-        			writer.write(tab(2) + file + ": [" + END);
+        			writer.write(tab(2) + quote(file) + ": [" + END);
         			
+        			int count3 = 1;
+        			int size3 = index.getIntegerSet(word, file).size();
         			for (Integer position : index.getIntegerSet(word, file)) {
-        				writer.write(tab(3) + position + END);
+        				writer.write(tab(3) + position + addComma(count3, size3) + END);
         			}
         			
-        			writer.write(tab(2) + "]" + END);
+        			writer.write(tab(2) + "]" + addComma(count2, size2) + END);
         		}
         		
-        		writer.write(tab(1) + "}" + END);
+        		writer.write(tab(1) + "}" + addComma(count1, size1) + END);
         	}
         	
         	writer.write("}" + END);
@@ -53,12 +56,12 @@ public class JSONWriter {
         }
     }
     
-    private String addComma() {
-    	if {
-    		
+    private String addComma(int count, int size) {
+    	if (count < size) {
+    		return ",";
     	}
     	else {
-    		
+    		return "";
     	}
     }
     
