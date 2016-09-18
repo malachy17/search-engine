@@ -15,6 +15,7 @@ public class Driver {
     	streamer.startTraversing();
     	
     	JSONWriter writer = new JSONWriter(outFile, index);
+    	writer.startWriting();
     	
     }
 }

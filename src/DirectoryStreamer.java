@@ -56,7 +56,7 @@ public class DirectoryStreamer {
     			String[] words = line.split(" ");
     			
     			for (String word : words) {
-    				index.considerAdding(word, (input.getFileName().toString()), position);
+    				index.considerAdding(word, (input.getFileName().normalize().toString()), position);
     				position++;
     			}
     		}
