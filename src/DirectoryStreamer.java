@@ -1,0 +1,61 @@
+import java.nio.file.DirectoryStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class DirectoryStreamer {
+	
+	private Path path;
+	private InvertedIndex index;
+	
+	public DirectoryStreamer(Path path, InvertedIndex index) throws IOException {
+		this.path = path;
+		this.index = index;
+		traverse(this.path);
+	}
+    
+    private void traverse(Path directory) throws IOException {
+        if (Files.isDirectory(directory)) {
+            traverse2(directory);
+        }
+        else {
+        	if (directory.getFileName().toString().toLowerCase().endsWith(".txt")) {
+        		parseFile(directory);
+        	}
+        }
+    }
+    
+    private void traverse2(Path path) throws IOException {
+        try (DirectoryStream<Path> listing = Files.newDirectoryStream(path)) {
+            for (Path file : listing) {
+                if (Files.isDirectory(file)) {
+                    traverse2(file);
+                }
+                else {
+                	if (file.getFileName().toString().toLowerCase().endsWith(".txt")) {
+                		parseFile(file);
+                	}
+                }
+            }
+        }
+    }
+    
+    private void parseFile(Path input) throws IOException {
+    	
+    	try (BufferedReader reader = Files.newBufferedReader(input, Charset.forName("UTF-8"));) {
+    		String line = null;
+    		int count = 1;
+    		
+    		while ((line = reader.readLine()) != null) {
+    			String[] words = line.split(" ");
+    			
+    			for (String word : words) {
+    				index.considerAdding(word, (input.getFileName().toString()), count);
+    				count++;
+    			}
+    		}
+    	}
+    }
+}
