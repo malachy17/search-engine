@@ -10,10 +10,13 @@ public class DirectoryStreamer {
 	private Path path;
 	private InvertedIndex index;
 	
-	public DirectoryStreamer(Path path, InvertedIndex index) throws IOException {
+	public DirectoryStreamer(Path path, InvertedIndex index) {
 		this.path = path;
 		this.index = index;
-		traverse(this.path);
+	}
+	
+	public void startTraversing() throws IOException {
+		traverse(path);
 	}
     
     private void traverse(Path directory) throws IOException {
@@ -46,14 +49,14 @@ public class DirectoryStreamer {
     	
     	try (BufferedReader reader = Files.newBufferedReader(input, Charset.forName("UTF-8"));) {
     		String line = null;
-    		int count = 1;
+    		int position = 1;
     		
     		while ((line = reader.readLine()) != null) {
     			String[] words = line.split(" ");
     			
     			for (String word : words) {
-    				index.considerAdding(word, (input.getFileName().toString()), count);
-    				count++;
+    				index.considerAdding(word, (input.getFileName().toString()), position);
+    				position++;
     			}
     		}
     	}
