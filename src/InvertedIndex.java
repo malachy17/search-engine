@@ -2,7 +2,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class InvertedIndex {
+public class InvertedIndex {//
 
 	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	

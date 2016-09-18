@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 
-public class JSONWriter {
+public class JSONWriter {//
 	
     private final char TAB = '\t';
     private final char END = '\n';
