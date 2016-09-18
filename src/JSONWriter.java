@@ -21,21 +21,35 @@ public class JSONWriter {
 		this.index = index;
 	}
 	
-	public void startWriting() {
+	public void startWriting() throws IOException {
 		writeNestedObject();
 	}
 
     private void writeNestedObject() throws IOException {
         
     	try (BufferedWriter writer = Files.newBufferedWriter(outFile, Charset.forName("UTF-8"));) {
-            
         	writer.write("{" + END);
         	
-        	for (String word : index.key)
-            
-            
+        	for (String word : index.getWordSet()) {
+        		writer.write(tab(1) + word + ": {" + END);
+        		
+        		for (String file : index.getFileSet(word)) {
+        			writer.write(tab(2) + file + ": [" + END);
+        			
+        			for (Integer position : index.getIntegerSet(word, file)) {
+        				writer.write(tab(3) + position + END);
+        			}
+        			
+        			writer.write(tab(2) + "]" + END);
+        		}
+        		
+        		writer.write(tab(1) + "}" + END);
+        	}
+        	
+        	writer.write("}" + END);
+    	}   
         catch (Exception e) {
-            System.out.println("Error in writeNestedObject");
+            System.err.println("Error in writeNestedObject");
         }
     }
     

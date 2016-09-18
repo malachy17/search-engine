@@ -1,3 +1,4 @@
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -43,6 +44,18 @@ public class InvertedIndex {
 		else if (command == 3) {
 			((index.get(word)).get(file)).add(position);
 		}
+	}
+	
+	public Set<String> getWordSet() {
+		return index.keySet();
+	}
+	
+	public Set<String> getFileSet(String word) {
+		return index.get(word).keySet();
+	}
+	
+	public Set<Integer> getIntegerSet(String word, String file) {
+		return index.get(word).get(file);
 	}
 }
 	
