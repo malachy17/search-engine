@@ -52,6 +52,7 @@ public class DirectoryStreamer {
     		int position = 1;
     		
     		while ((line = reader.readLine()) != null) {
+    			line = clean(line);
     			String[] words = line.split(" ");
     			
     			for (String word : words) {
@@ -60,5 +61,12 @@ public class DirectoryStreamer {
     			}
     		}
     	}
+    }
+    
+    private String clean(String line) {
+    	line = line.trim();
+    	line = line.toLowerCase();
+    	line = line.replaceAll("\\p{Punct}+", "");
+    	return line;
     }
 }
