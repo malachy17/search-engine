@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class DirectoryStreamer {//
+public class DirectoryStreamer {
 	
 	private Path path;
 	private InvertedIndex index;
