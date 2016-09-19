@@ -6,8 +6,8 @@ public class Driver {
 
     public static void main(String[] args) throws IOException {
     	
-    	Path path = Paths.get(args[0]);
-    	Path outFile = Paths.get(args[1]);
+    	Path path = Paths.get("/"); //Paths.get(args[0]);
+    	Path outFile = Paths.get("index.json");  //Paths.get(args[1]);
     	
     	// Create the inverted index data structure.
     	InvertedIndex index = new InvertedIndex();

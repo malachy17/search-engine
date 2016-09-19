@@ -41,12 +41,15 @@ public class JSONWriter {
         			int size3 = index.getIntegerSet(word, file).size();
         			for (Integer position : index.getIntegerSet(word, file)) {
         				writer.write(tab(3) + position + addComma(count3, size3) + END);
+        				count3++;
         			}
         			
         			writer.write(tab(2) + "]" + addComma(count2, size2) + END);
+        			count2++;
         		}
         		
         		writer.write(tab(1) + "}" + addComma(count1, size1) + END);
+        		count1++;
         	}
         	
         	writer.write("}" + END);
@@ -74,5 +77,4 @@ public class JSONWriter {
         Arrays.fill(tabs, TAB);
         return String.valueOf(tabs);
     }
-
 }
