@@ -23,7 +23,5 @@ public class Driver {
         	JSONWriter writer = new JSONWriter(outFile, index);
         	writer.startWriting();
     	}
-    	
-    	
     }
 }
