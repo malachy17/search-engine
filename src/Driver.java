@@ -6,7 +6,7 @@ public class Driver {
  
     public static void main(String[] args) throws IOException {
     	
-    	ArgumentParser argsParser = new ArgumentParser(String[] args);
+    	ArgumentParser argsParser = new ArgumentParser(args);
     	
     	Path path = Paths.get(argsParser.getValue("-dir"));
     	
