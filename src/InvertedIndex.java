@@ -58,4 +58,3 @@ public class InvertedIndex {
 		return index.get(word).get(file);
 	}
 }
-	

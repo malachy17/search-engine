@@ -25,7 +25,6 @@ public class Driver {
     	}
     	catch (NullPointerException e) {
     		System.err.println("You must enter a directory!");
-    	}
-    	
+    	} 	
     }
 }
