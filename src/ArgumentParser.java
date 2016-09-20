@@ -10,26 +10,31 @@ public class ArgumentParser {
 
     public ArgumentParser(String[] args) {
         this();
-        parseArguments(args);
+    	parseArguments(args);
     }
 
     public void parseArguments(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-        	if ((args[i].charAt(0) == '-') && (args[i].length() > 1)) {
-        		if ((args[i+1].charAt(0) != '-') && (args[i+1].length() > 1)) {
-        			if (!argumentMap.containsKey(args[i])) {
-        				argumentMap.put(args[i], args[i+1]);
-        			}
-        			else {
-        				argumentMap.remove(args[i]);
-        				argumentMap.put(args[i], args[i+1]);
-        			}
-        		}
-        		else {
-        			argumentMap.put(args[i], null);
-        		}
-        	}
-        }
+    	try {
+    		for (int i = 0; i < args.length; i++) {
+    			if ((args[i].charAt(0) == '-') && (args[i].length() > 1)) {
+    				if ((args[i+1].charAt(0) != '-') && (args[i+1].length() > 1)) {
+    					if (!argumentMap.containsKey(args[i])) {
+    						argumentMap.put(args[i], args[i+1]);
+    					}
+    					else {
+    						argumentMap.remove(args[i]);
+    						argumentMap.put(args[i], args[i+1]);
+    					}
+    				}
+    				else {
+    					argumentMap.put(args[i], null);
+    				}
+    			}
+    		}
+    	}
+    	catch (ArrayIndexOutOfBoundsException e) {
+    		System.err.println("You must enter a directory's path after -dir!");
+    	}
     }
 
     public int numFlags() {

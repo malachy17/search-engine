@@ -57,7 +57,7 @@ public class DirectoryStreamer {
     			
     			for (String word : words) {
     				if (!word.equalsIgnoreCase("")) {
-    					index.considerAdding(word, (input.getFileName().normalize().toString()), position);
+    					index.considerAdding(word.trim(), (input.normalize().toString()), position);
     					position++;
     				}
     			}

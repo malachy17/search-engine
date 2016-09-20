@@ -8,20 +8,24 @@ public class Driver {
     	
     	ArgumentParser argsParser = new ArgumentParser(args);
     	
-    	Path path = Paths.get(argsParser.getValue("-dir"));
+    	try {
+    		Path path = Paths.get(argsParser.getValue("-dir"));
     	
-    	// Create the inverted index data structure.
-    	InvertedIndex index = new InvertedIndex();
+    		// Create the inverted index data structure.
+    		InvertedIndex index = new InvertedIndex();
     	
-    	// Fill the inverted index data structure.
-    	DirectoryStreamer streamer = new DirectoryStreamer(path, index);
-    	streamer.startTraversing();
+    		// Fill the inverted index data structure.
+    		DirectoryStreamer streamer = new DirectoryStreamer(path, index);
+    		streamer.startTraversing();
     	
-    	// Write out index onto a JSON file.
-    	if (argsParser.hasFlag("-index")) {
+    		// Write out index onto a JSON file.
     		Path outFile = Paths.get(argsParser.getValue("-index", "index.json"));
-        	JSONWriter writer = new JSONWriter(outFile, index);
-        	writer.startWriting();
+    		JSONWriter writer = new JSONWriter(outFile, index);
+    		writer.startWriting();
     	}
+    	catch (NullPointerException e) {
+    		System.err.println("You must enter a directory!");
+    	}
+    	
     }
 }
