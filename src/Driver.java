@@ -3,11 +3,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Driver {
-
+ 
     public static void main(String[] args) throws IOException {
     	
-    	Path path = Paths.get(args[0]);
-    	Path outFile = Paths.get(args[1]);
+    	ArgumentParser argsParser = new ArgumentParser(String[] args);
+    	
+    	Path path = Paths.get(argsParser.getValue("-dir"));
     	
     	// Create the inverted index data structure.
     	InvertedIndex index = new InvertedIndex();
@@ -16,9 +17,13 @@ public class Driver {
     	DirectoryStreamer streamer = new DirectoryStreamer(path, index);
     	streamer.startTraversing();
     	
-    	// Write out the inverted index data structure in JSON.
-    	JSONWriter writer = new JSONWriter(outFile, index);
-    	writer.startWriting();
+    	// Write out index onto a JSON file.
+    	if (argsParser.hasFlag("-index")) {
+    		Path outFile = Paths.get(argsParser.getValue("-index", "index.json"));
+        	JSONWriter writer = new JSONWriter(outFile, index);
+        	writer.startWriting();
+    	}
+    	
     	
     }
 }
