@@ -7,6 +7,8 @@ import java.nio.file.Files;
 
 public class JSONWriter {
 	
+	// TODO No members, only static methods
+	
     private final char TAB = '\t';
     private final char END = '\n';
 	

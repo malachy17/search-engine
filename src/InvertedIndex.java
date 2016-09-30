@@ -4,12 +4,14 @@ import java.util.TreeSet;
 
 public class InvertedIndex {
 
+	// TODO Make this final
 	private TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	
 	public InvertedIndex() {
 		index = new TreeMap<>();
 	}
 	
+	// TODO add()
 	public void considerAdding(String word, String file, Integer position) {
 		// If the index does not contain the word, add the word, file, and position.
 		if (!index.containsKey(word)) {
@@ -23,7 +25,29 @@ public class InvertedIndex {
 		else if (!(((index.get(word)).get(file)).contains(position))) {
 			add(word, file, position, 3);
 		}
+		
+		/*
+		if (!index.containsKey(word)) {
+			index.put(word, new TreeMap<>());
+		}
+		
+		if (index.get(word).get(file) == null) {
+			index.get(word).put(file, new TreeSet<>());
+		}
+		
+		index.get(word).get(file).add(position);
+		*/
 	}
+	
+	/*
+	 * TODO
+	 * Instead of this add method...
+	 * (1) Integrate the logic directly in the public version**
+	 * (2) Split it into different methods for different "commands"
+	 *     - initPositionSet()
+	 *     - initLocationMap()
+	 *     ...
+	 */
 	
 	private void add(String word, String file, Integer position, int command) {
 		if (command == 1) {
@@ -45,6 +69,8 @@ public class InvertedIndex {
 			((index.get(word)).get(file)).add(position);
 		}
 	}
+	
+	// TODO Can't break encapsulation!
 	
 	public Set<String> getWordSet() {
 		return index.keySet();
