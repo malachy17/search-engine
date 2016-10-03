@@ -3,7 +3,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 public class InvertedIndexBuilder {
@@ -24,9 +23,6 @@ public class InvertedIndexBuilder {
 					}
 				}
 			}
-		}
-		catch (NoSuchFileException e) {
-			System.err.println("The directory that you entered is invalid.");
 		}
 	}
 
