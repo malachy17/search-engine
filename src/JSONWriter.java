@@ -7,24 +7,14 @@ import java.nio.file.Files;
 
 public class JSONWriter {
 	
-	// TODO No members, only static methods
+    private static final char TAB = '\t';
+    private static final char END = '\n';
 	
-    private final char TAB = '\t';
-    private final char END = '\n';
-	
-	private Path outFile;
-	private InvertedIndex index;
-	
-	public JSONWriter(Path outFile, InvertedIndex index) {
-		this.outFile = outFile;
-		this.index = index;
-	}
-	
-	public void startWriting() throws IOException {
-		writeNestedObject();
+	public static void startWriting(Path outFile, InvertedIndex index) throws IOException {
+		JSONWriter.writeNestedObject(outFile, index);
 	}
 
-    private void writeNestedObject() throws IOException {
+    private static void writeNestedObject(Path outFile, InvertedIndex index) throws IOException {
         
     	try (BufferedWriter writer = Files.newBufferedWriter(outFile, Charset.forName("UTF-8"));) {
         	writer.write("{" + END);
@@ -32,25 +22,25 @@ public class JSONWriter {
         	int count1 = 1;
         	int size1 = index.getWordSet().size();
         	for (String word : index.getWordSet()) {
-        		writer.write(tab(1) + quote(word) + ": {" + END);
+        		writer.write(JSONWriter.tab(1) + JSONWriter.quote(word) + ": {" + END);
         		
         		int count2 = 1;
         		int size2 = index.getFileSet(word).size();
         		for (String file : index.getFileSet(word)) {
-        			writer.write(tab(2) + quote(file) + ": [" + END);
+        			writer.write(JSONWriter.tab(2) + JSONWriter.quote(file) + ": [" + END);
         			
         			int count3 = 1;
         			int size3 = index.getIntegerSet(word, file).size();
         			for (Integer position : index.getIntegerSet(word, file)) {
-        				writer.write(tab(3) + position + addComma(count3, size3) + END);
+        				writer.write(JSONWriter.tab(3) + position + JSONWriter.addComma(count3, size3) + END);
         				count3++;
         			}
         			
-        			writer.write(tab(2) + "]" + addComma(count2, size2) + END);
+        			writer.write(JSONWriter.tab(2) + "]" + JSONWriter.addComma(count2, size2) + END);
         			count2++;
         		}
         		
-        		writer.write(tab(1) + "}" + addComma(count1, size1) + END);
+        		writer.write(JSONWriter.tab(1) + "}" + JSONWriter.addComma(count1, size1) + END);
         		count1++;
         	}
         	
@@ -61,7 +51,7 @@ public class JSONWriter {
         }
     }
     
-    private String addComma(int count, int size) {
+    private static String addComma(int count, int size) {
     	if (count < size) {
     		return ",";
     	}
@@ -70,11 +60,11 @@ public class JSONWriter {
     	}
     }
     
-    private String quote(String text) {
+    private static String quote(String text) {
         return String.format("\"%s\"", text);
     }
 
-    private String tab(int n) {
+    private static String tab(int n) {
         char[] tabs = new char[n];
         Arrays.fill(tabs, TAB);
         return String.valueOf(tabs);

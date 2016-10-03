@@ -1,79 +1,118 @@
 import java.util.HashMap;
 
-// TODO Use the Eclipse indenter 
-// TODO Javadoc all your classes and methods
-// TODO Configure eclipse to auto-collapse comments
-
 public class ArgumentParser {
 
-	private final HashMap<String, String> argumentMap;
+    private final HashMap<String, String> argumentMap;
 
-	public ArgumentParser() {
-		argumentMap = new HashMap<>();
-	}
+    public ArgumentParser() {
+        argumentMap = new HashMap<>();
+    }
 
-	public ArgumentParser(String[] args) {
-		this();
-		parseArguments(args);
-	}
+    public ArgumentParser(String[] args) {
+        this();
+        parseArguments(args);
+    }
 
-	public void parseArguments(String[] args) {
-		try {
-			for (int i = 0; i < args.length; i++) {
-				if ((args[i].charAt(0) == '-') && (args[i].length() > 1)) {
-					if ((args[i+1].charAt(0) != '-') && (args[i+1].length() > 1)) {
-						if (!argumentMap.containsKey(args[i])) {
-							argumentMap.put(args[i], args[i+1]);
-						}
-						else {
-							argumentMap.remove(args[i]);
-							argumentMap.put(args[i], args[i+1]);
-						}
-					}
-					else {
-						argumentMap.put(args[i], null);
-					}
-				}
-			}
-		}
-		catch (ArrayIndexOutOfBoundsException e) {
-			System.err.println("You must enter a directory's path after -dir!");
-		}
-	}
+    public void parseArguments(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+        	if (isFlag(args[i])) {
+        		if (i == args.length-1) {
+        			argumentMap.put(args[i], null);
+        		}
+        		else if (isValue(args[i+1])) {
+        			if (!argumentMap.containsKey(args[i])) {
+        				argumentMap.put(args[i], args[i+1]);
+        			}
+        			else {
+        				argumentMap.remove(args[i]);
+        				argumentMap.put(args[i], args[i+1]);
+        			}
+        		}
+        		else {
+        			argumentMap.put(args[i], null);
+        		}
+        	}
+        }
+    }
 
-	public int numFlags() {
-		return argumentMap.size();
-	}
+    public static boolean isFlag(String arg) {
+    	arg = arg.trim();
+    	try {
+    		if ((arg.charAt(0) == '-') && (arg.length() > 1)) {
+    			return true;
+    		}
+    	}
+    	catch (StringIndexOutOfBoundsException e) {
+    		System.err.println("You must input something!");
+    	}
+        return false;
+    }
 
-	public boolean hasFlag(String flag) {
-		if (argumentMap.containsKey(flag)) {
-			return true;
-		}
-		return false;
-	}
+    public static boolean isValue(String arg) {
+    	arg = arg.trim();
+    	try {
+    		if ((arg.charAt(0) != '-') && (arg.length() > 0)) {
+    			return true;
+    		}
+    	}
+    	catch (StringIndexOutOfBoundsException e) {
+    		System.err.println("You must input something!");
+    	}
+        return false;
+    }
 
-	public boolean hasValue(String flag) {
-		if (argumentMap.get(flag) != null) {
-			return true;
-		}
-		return false;
-	}
+    public int numFlags() {
+    	return argumentMap.size();
+    }
 
-	public String getValue(String flag) {
-		if (argumentMap.get(flag) != null) {
-			return argumentMap.get(flag);
-		}
-		return null;
-	}
+    public boolean hasFlag(String flag) {
+    	if (argumentMap.containsKey(flag)) {
+    		return true;
+    	}
+        return false;
+    }
 
-	public String getValue(String flag, String defaultValue) {
-		if (argumentMap.get(flag) != null) {
-			return argumentMap.get(flag);
-		}
-		return defaultValue;
-	}
+    public boolean hasValue(String flag) {
+    	if (argumentMap.get(flag) != null) {
+    		return true;
+    	}
+        return false;
+    }
 
-	public String toString() {
-		return argumentMap.toString();
-	}
+    public String getValue(String flag) {
+    	if (argumentMap.get(flag) != null) {
+    		return argumentMap.get(flag);
+    	}
+        return null;
+    }
+
+    public String getValue(String flag, String defaultValue) {
+    	if (argumentMap.get(flag) != null) {
+    		return argumentMap.get(flag);
+    	}
+        return defaultValue;
+    }
+
+    public int getValue(String flag, int defaultValue) {
+    	if (argumentMap.get(flag) != null) {
+    		if (isInt(argumentMap.get(flag))) {
+    			return Integer.parseInt(argumentMap.get(flag));
+    		}
+    	}
+        return defaultValue;
+    }
+
+    public String toString() {
+        return argumentMap.toString();
+    }
+    
+    public boolean isInt(String str) {
+    	try {
+    		Integer.parseInt(str);
+    		return true;
+    	}
+    	catch (NumberFormatException e) {
+    		return false;
+    	}
+    }
 }
