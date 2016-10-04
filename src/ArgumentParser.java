@@ -38,33 +38,13 @@ public class ArgumentParser {
 	}
 
 	public static boolean isFlag(String arg) {
-		// TODO Update and simplify these methods (don't produce console output)
-//		arg = arg.trim();
-//		return !arg.isEmpty() && arg.startsWith("-") && arg.length() > 1;
-		
 		arg = arg.trim();
-		try {
-			if ((arg.charAt(0) == '-') && (arg.length() > 1)) {
-				return true;
-			}
-		}
-		catch (StringIndexOutOfBoundsException e) {
-			System.err.println("You must input something!");
-		}
-		return false;
+		return !arg.isEmpty() && arg.startsWith("-") && arg.length() > 1;
 	}
 
 	public static boolean isValue(String arg) {
 		arg = arg.trim();
-		try {
-			if ((arg.charAt(0) != '-') && (arg.length() > 0)) {
-				return true;
-			}
-		}
-		catch (StringIndexOutOfBoundsException e) {
-			System.err.println("You must input something!");
-		}
-		return false;
+		return !arg.isEmpty() && !arg.startsWith("-") && (arg.length() > 0);
 	}
 
 	public int numFlags() {
@@ -86,10 +66,7 @@ public class ArgumentParser {
 	}
 
 	public String getValue(String flag) {
-		if (argumentMap.get(flag) != null) {
-			return argumentMap.get(flag); // TODO Only line
-		}
-		return null;
+		return argumentMap.get(flag);
 	}
 
 	public String getValue(String flag, String defaultValue) {

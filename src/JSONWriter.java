@@ -12,11 +12,7 @@ public class JSONWriter {
 	private static final char TAB = '\t';
 	private static final char END = '\n';
 
-	public static void startWriting(Path outFile, InvertedIndex index) throws IOException {
-		JSONWriter.writeNestedObject(outFile, index);
-	}
-
-	private static void writeNestedObject(Path outFile, InvertedIndex index) throws IOException { // TODO Make this public
+	public static void writeNestedObject(Path outFile, InvertedIndex index) throws IOException {
 
 		try (BufferedWriter writer = Files.newBufferedWriter(outFile, Charset.forName("UTF-8"));) {
 			writer.write("{" + END);

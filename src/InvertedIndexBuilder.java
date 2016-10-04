@@ -32,16 +32,15 @@ public class InvertedIndexBuilder {
 			String line = null;
 			int position = 1;
 
-			// TODO Determine the String location once, each call to "normalize" actually takes a bit of time
-			// String location = input.normalize().toString();
+			String location = input.normalize().toString();
 			
 			while ((line = reader.readLine()) != null) {
 				line = InvertedIndexBuilder.clean(line);
-				String[] words = line.split(" "); // TODO split("\\s+")
+				String[] words = line.split("\\s+");
 
 				for (String word : words) {
-					if (!word.equalsIgnoreCase("")) { // TODO !word.isEmpty()
-						index.add(word.trim(), (input.normalize().toString()), position); // TODO index.add(word.trim(), location, position)
+					if (!word.isEmpty()) {
+						index.add(word.trim(), location, position);
 						position++;
 					}
 				}
