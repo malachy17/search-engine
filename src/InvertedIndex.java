@@ -36,4 +36,19 @@ public class InvertedIndex {
 	public Set<Integer> getIntegerSet(String word, String file) {
 		return index.get(word).get(file);
 	}
+	
+	// TODO Classes like HashMap have getters because they are SUPER general
+	// TODO Classes like an InvertedIndex won't have getters because they break encapsulation
+	
+//	public boolean containsWord(String word)
+//	public boolean containsLocation(String word, String location)
+//	
+//	public int numWords()
+//	public int numLcoations(String word)
+//	
+//	public String toString() { return index.toString() }
+//	
+//	public void toJSON(Path output) {
+//		JSONWriter.startWriting(output, index);
+//	}
 }
