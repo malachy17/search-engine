@@ -1,21 +1,38 @@
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 
-// TODO Configure Eclipse to correct indentation on save.
-
+/**
+ * Outputs the data of a Map to a JSON file in proper JSON format.
+ * 
+ * @see <a href="http://json.org/">http://json.org/</a>
+ */
 public class JSONWriter {
 
+	/** Tab character used for pretty JSON output. */
 	private static final char TAB = '\t';
+
+	/** End of line character used for pretty JSON output. */
 	private static final char END = '\n';
 
-	public static void writeNestedObject(Path outFile, Map<String, TreeMap<String, TreeSet<Integer>>> map) throws IOException {
+	/**
+	 * Writes data from a Map to JSON format on a JSON file.
+	 * 
+	 * @param outFile
+	 *            the file that the JSON output is saved on
+	 * @param map
+	 *            the data structure who's data is being used to write JSON
+	 *            output
+	 * @throws IOException
+	 */
+	public static void writeNestedObject(Path outFile, Map<String, TreeMap<String, TreeSet<Integer>>> map)
+			throws IOException {
 
 		try (BufferedWriter writer = Files.newBufferedWriter(outFile, Charset.forName("UTF-8"));) {
 			writer.write("{" + END);
@@ -46,25 +63,45 @@ public class JSONWriter {
 			}
 
 			writer.write("}" + END);
-		}   
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.err.println("Error in writeNestedObject");
 		}
 	}
 
+	/**
+	 * Returns a comma count is less than the size of the data structure.
+	 * 
+	 * @param count
+	 *            a counter that keeps track of the number of elements
+	 * @param size
+	 *            the size of the data structure
+	 * @return a comma if count is less than size, an empty string otherwise
+	 */
 	private static String addComma(int count, int size) {
 		if (count < size) {
 			return ",";
-		}
-		else {
+		} else {
 			return "";
 		}
 	}
 
+	/**
+	 * Returns a quoted version of the provided text.
+	 * 
+	 * @param text
+	 * @return "text" in quotes
+	 */
 	private static String quote(String text) {
 		return String.format("\"%s\"", text);
 	}
 
+	/**
+	 * Returns n tab characters.
+	 * 
+	 * @param n
+	 *            number of tab characters
+	 * @return n tab characters concatenated
+	 */
 	private static String tab(int n) {
 		char[] tabs = new char[n];
 		Arrays.fill(tabs, TAB);
