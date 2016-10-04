@@ -25,7 +25,7 @@ public class Driver {
 				// TODO Move this to a separate if block outside of hasFlag(-dir)
 				if (argsParser.hasFlag("-index")) {
 					Path outFile = Paths.get(argsParser.getValue("-index", "index.json"));
-					JSONWriter.writeNestedObject(outFile, index);
+					index.toJSON(outFile);
 				}
 			}
 			else {

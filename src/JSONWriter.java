@@ -1,5 +1,8 @@
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -12,24 +15,24 @@ public class JSONWriter {
 	private static final char TAB = '\t';
 	private static final char END = '\n';
 
-	public static void writeNestedObject(Path outFile, InvertedIndex index) throws IOException {
+	public static void writeNestedObject(Path outFile, Map<String, TreeMap<String, TreeSet<Integer>>> map) throws IOException {
 
 		try (BufferedWriter writer = Files.newBufferedWriter(outFile, Charset.forName("UTF-8"));) {
 			writer.write("{" + END);
 
 			int count1 = 1;
-			int size1 = index.getWordSet().size();
-			for (String word : index.getWordSet()) {
+			int size1 = map.keySet().size();
+			for (String word : map.keySet()) {
 				writer.write(JSONWriter.tab(1) + JSONWriter.quote(word) + ": {" + END);
 
 				int count2 = 1;
-				int size2 = index.getFileSet(word).size();
-				for (String file : index.getFileSet(word)) {
+				int size2 = map.get(word).keySet().size();
+				for (String file : map.get(word).keySet()) {
 					writer.write(JSONWriter.tab(2) + JSONWriter.quote(file) + ": [" + END);
 
 					int count3 = 1;
-					int size3 = index.getIntegerSet(word, file).size();
-					for (Integer position : index.getIntegerSet(word, file)) {
+					int size3 = map.get(word).get(file).size();
+					for (Integer position : map.get(word).get(file)) {
 						writer.write(JSONWriter.tab(3) + position + JSONWriter.addComma(count3, size3) + END);
 						count3++;
 					}
