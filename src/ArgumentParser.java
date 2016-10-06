@@ -110,6 +110,8 @@ public class ArgumentParser {
 			return true;
 		}
 		return false;
+		
+		// TODO return argumentMap.containsKey(flag);
 	}
 
 	/**
