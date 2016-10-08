@@ -107,4 +107,6 @@ public class JSONWriter {
 		Arrays.fill(tabs, TAB);
 		return String.valueOf(tabs);
 	}
+	
+	// TODO Project 2: add a method here for search output
 }

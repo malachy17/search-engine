@@ -40,9 +40,11 @@ public class InvertedIndex {
 		if (!index.containsKey(word)) {
 			index.put(word, new TreeMap<>());
 		}
+		
 		if (index.get(word).get(file) == null) {
 			index.get(word).put(file, new TreeSet<>());
 		}
+		
 		index.get(word).get(file).add(position);
 	}
 
@@ -57,4 +59,19 @@ public class InvertedIndex {
 	public void toJSON(Path output) throws IOException {
 		JSONWriter.writeNestedObject(output, index);
 	}
+	
+	// TODO Add methods
+	// TODO containsWord(String word), containsLocation(String word, String location), etc.
+	// TODO numWords(), numLocations(String word), etc.
+	
+	public String toString() { // TODO Add this
+		return index.toString();
+	}
+	
+	// TODO Project 2: add search methods here
+//	public List<SearchResult> exactSearch(String[] queryWords) {
+		// the list of search results should already be sorted
+//	}
+	
+	// TODO Make a SearchResult class that represents 1 search result at a time, and knows how to sort itself (i.e. implements Comparable) 
 }
