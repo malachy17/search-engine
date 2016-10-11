@@ -63,6 +63,14 @@ public class InvertedIndex {
 		JSONWriter.writeNestedObject(output, index);
 	}
 
+	/**
+	 * Searches index for the word or words in the query, and puts the necessary
+	 * data into a SearchResult object, which is place into an ArrayList and
+	 * returned.
+	 * 
+	 * @param query
+	 * @return
+	 */
 	public ArrayList<SearchResult> exactSearch(String query) {
 		ArrayList<SearchResult> list = new ArrayList<>();
 
@@ -88,6 +96,14 @@ public class InvertedIndex {
 		return list;
 	}
 
+	/**
+	 * Searches index for the words that start with the prefix or prefixes in
+	 * the query, and puts the necessary data into a SearchResult object, which
+	 * is place into an ArrayList and returned.
+	 * 
+	 * @param query
+	 * @return
+	 */
 	public ArrayList<SearchResult> partialSearch(String query) {
 		ArrayList<SearchResult> list = new ArrayList<>();
 
@@ -119,6 +135,15 @@ public class InvertedIndex {
 		return list;
 	}
 
+	/**
+	 * Finds SearchResult objects in the results ArrayList that share the same
+	 * file, and combines their data into one SearchResult object. Adds this
+	 * SearchResult object and unaffected SearchResult objects into a new
+	 * ArrayList.
+	 * 
+	 * @param results
+	 * @return
+	 */
 	private ArrayList<SearchResult> merge(ArrayList<SearchResult> results) {
 		// The perfected ArrayList to be returned.
 		ArrayList<SearchResult> newResults = new ArrayList<>();

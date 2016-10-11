@@ -69,7 +69,13 @@ public class JSONWriter {
 		}
 	}
 
-	// Outputs to a file, the Result Map in JSON format.
+	/**
+	 * Outputs the Map of queries and results to a file in JSON format.
+	 * 
+	 * @param outFile
+	 * @param map
+	 * @throws IOException
+	 */
 	public static void writeSearchResults(Path outFile, TreeMap<String, ArrayList<SearchResult>> map)
 			throws IOException {
 

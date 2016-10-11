@@ -9,9 +9,16 @@ import java.util.TreeMap;
 
 public class QueryHelper {
 
-	// Goes through each query line, cleans, rearranges, and returns a List of
-	// the readied queries.
-
+	/**
+	 * Goes through each query line, cleans, rearranges the words. Sends those
+	 * cleaned words to the exactSearch method. Gets the list from exactSearch,
+	 * puts it in a map with the query as the key. Returns the map.
+	 * 
+	 * @param file
+	 * @param index
+	 * @return
+	 * @throws IOException
+	 */
 	public static TreeMap<String, ArrayList<SearchResult>> parseQueryExact(Path file, InvertedIndex index)
 			throws IOException {
 
@@ -29,6 +36,16 @@ public class QueryHelper {
 		return map;
 	}
 
+	/**
+	 * Goes through each query line, cleans, rearranges the words. Sends those
+	 * cleaned words to the partialSearch method. Gets the list from
+	 * exactSearch, puts it in a map with the query as the key. Returns the map.
+	 * 
+	 * @param file
+	 * @param index
+	 * @return
+	 * @throws IOException
+	 */
 	public static TreeMap<String, ArrayList<SearchResult>> parseQueryPartial(Path file, InvertedIndex index)
 			throws IOException {
 
@@ -46,7 +63,12 @@ public class QueryHelper {
 		return map;
 	}
 
-	// Cleans the query.
+	/**
+	 * Cleans the query.
+	 * 
+	 * @param line
+	 * @return
+	 */
 	private static String clean(String line) {
 		line = line.trim();
 		line = line.toLowerCase();
@@ -54,7 +76,12 @@ public class QueryHelper {
 		return line;
 	}
 
-	// Rearranges the words in the query alphabetically.
+	/**
+	 * Rearranges the words in the query alphabetically.
+	 * 
+	 * @param line
+	 * @return
+	 */
 	private static String rearrange(String line) {
 		String[] words = line.split(" ");
 		if (words.length > 1) {
