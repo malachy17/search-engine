@@ -106,12 +106,7 @@ public class ArgumentParser {
 	 * @return {@code true} if flag exists
 	 */
 	public boolean hasFlag(String flag) {
-		if (argumentMap.containsKey(flag)) {
-			return true;
-		}
-		return false;
-		
-		// TODO return argumentMap.containsKey(flag);
+		return argumentMap.containsKey(flag);
 	}
 
 	/**

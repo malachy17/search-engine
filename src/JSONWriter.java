@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -68,6 +69,37 @@ public class JSONWriter {
 		}
 	}
 
+	// Outputs to a file, the Result Map in JSON format.
+	public static void writeSearchResults(Path outFile, TreeMap<String, ArrayList<SearchResult>> map)
+			throws IOException {
+
+		try (BufferedWriter writer = Files.newBufferedWriter(outFile, Charset.forName("UTF-8"));) {
+			writer.write("{" + END);
+
+			int count1 = 1;
+			int size1 = map.keySet().size();
+			for (String word : map.keySet()) {
+				writer.write(JSONWriter.tab(1) + JSONWriter.quote(word) + ": [" + END);
+
+				int count2 = 1;
+				int size2 = map.get(word).size();
+				for (SearchResult result : map.get(word)) {
+					writer.write(JSONWriter.tab(2) + "{" + END);
+					writer.write(JSONWriter.tab(3) + "where:" + JSONWriter.quote(result.getPath()) + "," + END);
+					writer.write(JSONWriter.tab(3) + "count:" + result.getCount() + "," + END);
+					writer.write(JSONWriter.tab(3) + "index:" + result.getFirstPosition() + END);
+					writer.write(JSONWriter.tab(2) + "}" + JSONWriter.addComma(count2, size2) + END);
+					count2++;
+				}
+
+				writer.write(JSONWriter.tab(1) + "]" + JSONWriter.addComma(count1, size1) + END);
+				count1++;
+			}
+
+			writer.write("}" + END);
+		}
+	}
+
 	/**
 	 * Returns a comma count is less than the size of the data structure.
 	 * 
@@ -107,6 +139,5 @@ public class JSONWriter {
 		Arrays.fill(tabs, TAB);
 		return String.valueOf(tabs);
 	}
-	
-	// TODO Project 2: add a method here for search output
+
 }

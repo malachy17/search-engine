@@ -1,5 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -40,11 +43,11 @@ public class InvertedIndex {
 		if (!index.containsKey(word)) {
 			index.put(word, new TreeMap<>());
 		}
-		
+
 		if (index.get(word).get(file) == null) {
 			index.get(word).put(file, new TreeSet<>());
 		}
-		
+
 		index.get(word).get(file).add(position);
 	}
 
@@ -59,19 +62,94 @@ public class InvertedIndex {
 	public void toJSON(Path output) throws IOException {
 		JSONWriter.writeNestedObject(output, index);
 	}
-	
-	// TODO Add methods
-	// TODO containsWord(String word), containsLocation(String word, String location), etc.
-	// TODO numWords(), numLocations(String word), etc.
-	
-	public String toString() { // TODO Add this
-		return index.toString();
+
+	public ArrayList<SearchResult> exactSearch(String query) {
+		ArrayList<SearchResult> list = new ArrayList<>();
+
+		// Goes through each query.
+		String[] words = query.split(" ");
+
+		// Goes through each word in this query.
+		for (String word : words) {
+			if (index.containsKey(word)) {
+
+				for (String file : index.get(word).keySet()) {
+					int count = index.get(word).get(file).size();
+					int firstPosition = index.get(word).get(file).first();
+
+					list.add(new SearchResult(count, firstPosition, file));
+				}
+
+			}
+		}
+
+		list = merge(list);
+		Collections.sort(list);
+		return list;
 	}
-	
-	// TODO Project 2: add search methods here
-//	public List<SearchResult> exactSearch(String[] queryWords) {
-		// the list of search results should already be sorted
-//	}
-	
-	// TODO Make a SearchResult class that represents 1 search result at a time, and knows how to sort itself (i.e. implements Comparable) 
+
+	public ArrayList<SearchResult> partialSearch(String query) {
+		ArrayList<SearchResult> list = new ArrayList<>();
+
+		// Goes through each query.
+		String[] words = query.split(" ");
+
+		// Goes through each word in this query.
+		for (String word : words) {
+
+			// Goes through each key in the tailMap of the index.
+			for (String indexWord : index.tailMap(word).keySet()) {
+
+				if (!indexWord.startsWith(word)) {
+					break;
+				}
+
+				// Goes through each file in this key.
+				for (String file : index.get(indexWord).keySet()) {
+					int count = index.get(word).get(file).size();
+					int firstPosition = index.get(word).get(file).first();
+
+					list.add(new SearchResult(count, firstPosition, file));
+				}
+			}
+		}
+
+		list = merge(list);
+		Collections.sort(list);
+		return list;
+	}
+
+	private ArrayList<SearchResult> merge(ArrayList<SearchResult> results) {
+		// The perfected ArrayList to be returned.
+		ArrayList<SearchResult> newResults = new ArrayList<>();
+
+		// Store all files found in results.
+		HashSet<String> files = new HashSet<String>();
+		for (SearchResult result : results) {
+			files.add(result.getPath());
+		}
+
+		// For each file, get all the words in results that have that
+		// file, and combine the data to create 1 SearchResult object
+		// per file.
+		for (String file : files) {
+			int totalCount = 0;
+			int firstPosition = -1;
+
+			for (SearchResult result : results) {
+
+				if (result.getPath().equals(file)) {
+					totalCount += result.getCount();
+
+					if ((firstPosition == -1) || (result.getFirstPosition() < firstPosition)) {
+						firstPosition = result.getFirstPosition();
+					}
+				}
+			}
+
+			newResults.add(new SearchResult(totalCount, firstPosition, file));
+		}
+
+		return newResults;
+	}
 }

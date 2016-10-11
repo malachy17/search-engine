@@ -1,9 +1,11 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
- * Goes through a given direcotry and documents all words in every text file
+ * Goes through a given directory and documents all words in every text file
  * within that directory. Documents by storing each word, its file, and its
  * position in the file into an InvertedIndex class.
  */
@@ -26,30 +28,59 @@ public class Driver {
 
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex index = new InvertedIndex();
+		TreeMap<String, ArrayList<SearchResult>> resultMap = null;
 
 		if (parser.hasFlag("-dir")) {
 			try {
 				Path path = Paths.get(parser.getValue("-dir"));
 				InvertedIndexBuilder.traverse(path, index);
 			} catch (IOException e) {
-				System.err.println("Invalid path."); // TODO Unable to traverse path + path
+				System.err.println("Unable to traverse path.");
 			} catch (NullPointerException e) {
 				System.err.println("Enter a directory after the \"dir\" flag.");
 			}
 		}
-		
-		// TODO Project 2: if has -exact flag, -query? -partial? flag
 
 		if (parser.hasFlag("-index")) {
 			try {
 				Path outFile = Paths.get(parser.getValue("-index", "index.json"));
 				index.toJSON(outFile);
 			} catch (Exception e) {
-				System.err.println("Invalid path."); // TODO Unable to write to path + outFile
+				System.err.println("Unable to write to path + outputFile.");
 			}
 		}
-		
-		// TODO Project 2: if has whatever flag it was i said for writing search output
-		// TODO Project 2: add a class that handles parsing the query files
+
+		if (parser.hasFlag("-exact")) {
+			try {
+				Path file = Paths.get(parser.getValue("-exact"));
+				resultMap = QueryHelper.parseQueryExact(file, index);
+			} catch (IOException e) {
+				System.err.println("Unable to use path.");
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (parser.hasFlag("-query")) {
+			try {
+				Path file = Paths.get(parser.getValue("-query"));
+				resultMap = QueryHelper.parseQueryPartial(file, index);
+			} catch (IOException e) {
+				System.err.println("Unable to use path.");
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (parser.hasFlag("-results")) {
+			try {
+				Path outFile = Paths.get(parser.getValue("-results", "results.json"));
+				JSONWriter.writeSearchResults(outFile, resultMap);
+			} catch (IOException e) {
+				System.err.println("Unable to use path.");
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
