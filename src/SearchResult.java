@@ -13,11 +13,11 @@ public class SearchResult implements Comparable<SearchResult> {
 	public int compareTo(SearchResult other) {
 
 		if (Integer.compare(this.count, other.count) != 0) {
-			return Integer.compare(this.count, other.count);
+			return -1 * Integer.compare(this.count, other.count);
 		}
 
 		if (Integer.compare(this.firstPosition, other.firstPosition) != 0) {
-			return -1 * Integer.compare(this.firstPosition, other.firstPosition);
+			return Integer.compare(this.firstPosition, other.firstPosition);
 		}
 
 		return this.path.compareToIgnoreCase(other.path);

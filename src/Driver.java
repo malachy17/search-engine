@@ -57,7 +57,9 @@ public class Driver {
 			} catch (IOException e) {
 				System.err.println("Unable to use path.");
 			} catch (NullPointerException e) {
-				e.printStackTrace();
+				System.err.println("Some data was unretrievable.");
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
 			}
 		}
 
@@ -68,7 +70,9 @@ public class Driver {
 			} catch (IOException e) {
 				System.err.println("Unable to use path.");
 			} catch (NullPointerException e) {
-				e.printStackTrace();
+				System.err.println("Some data was unretrievable.");
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
 			}
 		}
 
@@ -79,7 +83,9 @@ public class Driver {
 			} catch (IOException e) {
 				System.err.println("Unable to use path.");
 			} catch (NullPointerException e) {
-				e.printStackTrace();
+				System.err.println("Some data was unretrievable.");
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
 			}
 		}
 	}

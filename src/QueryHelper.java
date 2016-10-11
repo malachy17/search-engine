@@ -90,7 +90,7 @@ public class QueryHelper {
 			for (String word : words) {
 				line += word + " ";
 			}
-			line.trim();
+			line = line.trim();
 			return line;
 		}
 		return line;

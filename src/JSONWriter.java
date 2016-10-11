@@ -91,9 +91,9 @@ public class JSONWriter {
 				int size2 = map.get(word).size();
 				for (SearchResult result : map.get(word)) {
 					writer.write(JSONWriter.tab(2) + "{" + END);
-					writer.write(JSONWriter.tab(3) + "where:" + JSONWriter.quote(result.getPath()) + "," + END);
-					writer.write(JSONWriter.tab(3) + "count:" + result.getCount() + "," + END);
-					writer.write(JSONWriter.tab(3) + "index:" + result.getFirstPosition() + END);
+					writer.write(JSONWriter.tab(3) + "\"where\": " + JSONWriter.quote(result.getPath()) + "," + END);
+					writer.write(JSONWriter.tab(3) + "\"count\": " + result.getCount() + "," + END);
+					writer.write(JSONWriter.tab(3) + "\"index\": " + result.getFirstPosition() + END);
 					writer.write(JSONWriter.tab(2) + "}" + JSONWriter.addComma(count2, size2) + END);
 					count2++;
 				}
