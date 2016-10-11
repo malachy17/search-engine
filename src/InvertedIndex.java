@@ -108,22 +108,22 @@ public class InvertedIndex {
 		ArrayList<SearchResult> list = new ArrayList<>();
 
 		// Goes through each query.
-		String[] words = query.split(" ");
+		String[] prefixes = query.split(" ");
 
 		// Goes through each word in this query.
-		for (String word : words) {
+		for (String prefix : prefixes) {
 
 			// Goes through each key in the tailMap of the index.
-			for (String indexWord : index.tailMap(word).keySet()) {
+			for (String indexWord : index.tailMap(prefix).keySet()) {
 
-				if (!indexWord.startsWith(word)) {
+				if (!indexWord.startsWith(prefix)) {
 					break;
 				}
 
 				// Goes through each file in this key.
 				for (String file : index.get(indexWord).keySet()) {
-					int count = index.get(word).get(file).size();
-					int firstPosition = index.get(word).get(file).first();
+					int count = index.get(indexWord).get(file).size();
+					int firstPosition = index.get(indexWord).get(file).first();
 
 					list.add(new SearchResult(count, firstPosition, file));
 				}
