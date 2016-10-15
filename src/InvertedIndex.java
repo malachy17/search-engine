@@ -72,10 +72,14 @@ public class InvertedIndex {
 	 * @return
 	 */
 	public ArrayList<SearchResult> exactSearch(String query) {
+		// TODO Double check StackOverflow if ArrayList or LinkedList is better for sorting
 		ArrayList<SearchResult> list = new ArrayList<>();
+		
+		// TODO Use a map!
+//		Map<String, SearchResult> map = ???
 
 		// Goes through each query.
-		String[] words = query.split(" ");
+		String[] words = query.split(" "); // TODO Take already split queries as input (data structures tend not to do string parsing)
 
 		// Goes through each word in this query.
 		for (String word : words) {
@@ -85,13 +89,24 @@ public class InvertedIndex {
 					int count = index.get(word).get(file).size();
 					int firstPosition = index.get(word).get(file).first();
 
-					list.add(new SearchResult(count, firstPosition, file));
+					// TODO
+//					if we have seen this result before (if we have the file as a key in our map)
+//						update the already existing result
+//					else
+//						add the file, and a new result to the map
+						
+						list.add(new SearchResult(count, firstPosition, file));
 				}
 
 			}
 		}
 
 		list = merge(list);
+		
+		// TODO
+//		list.addAll(map.values());
+		
+		
 		Collections.sort(list);
 		return list;
 	}

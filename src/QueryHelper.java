@@ -7,7 +7,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeMap;
 
+// TODO Class that stores and does stuff
+
 public class QueryHelper {
+	
+
+	// TODO
+//	private final TreeMap<String, List<SearchResult>> map;
+//	private final InvertedIndex index;
+//	
+//	public QueryHelper(InvertedIndex index) {
+//		
+//	}
 
 	/**
 	 * Goes through each query line, cleans, rearranges the words. Sends those
@@ -35,6 +46,11 @@ public class QueryHelper {
 
 		return map;
 	}
+	
+	/* TODO
+	public void parseQuery(Path file, InvertedIndex index, boolean exact) {
+		
+	}*/
 
 	/**
 	 * Goes through each query line, cleans, rearranges the words. Sends those
@@ -83,6 +99,12 @@ public class QueryHelper {
 	 * @return
 	 */
 	private static String rearrange(String line) {
+//		String[] words = line.split("\\s+"); // TODO
+//		Arrays.sort(words);
+//		return String.join(" ", words);
+		
+		
+		
 		String[] words = line.split(" ");
 		if (words.length > 1) {
 			Arrays.sort(words);
