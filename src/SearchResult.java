@@ -1,14 +1,31 @@
+
+// TODO Javadoc
+
 public class SearchResult implements Comparable<SearchResult> {
 
 	private int count;
 	private int firstPosition;
-	private String path;
+	
+	private String path; // TODO final
 
 	public SearchResult(int count, int firstPosition, String path) {
 		this.count = count;
 		this.firstPosition = firstPosition;
 		this.path = path;
 	}
+
+	// TODO 
+//	public void addCount(int count) {
+//		this.count += count;
+//	}
+//	
+//	public void updateFirstPosition(int position) {
+//		update if less then
+//	}
+//	
+//	public void update(int count, int position) {
+//		calls your other methods
+//	}
 
 	public int compareTo(SearchResult other) {
 
