@@ -5,27 +5,14 @@ public class SearchResult implements Comparable<SearchResult> {
 
 	private int count;
 	private int firstPosition;
-	
-	private String path; // TODO final
+
+	private final String path;
 
 	public SearchResult(int count, int firstPosition, String path) {
 		this.count = count;
 		this.firstPosition = firstPosition;
 		this.path = path;
 	}
-
-	// TODO 
-//	public void addCount(int count) {
-//		this.count += count;
-//	}
-//	
-//	public void updateFirstPosition(int position) {
-//		update if less then
-//	}
-//	
-//	public void update(int count, int position) {
-//		calls your other methods
-//	}
 
 	public int compareTo(SearchResult other) {
 
@@ -52,4 +39,11 @@ public class SearchResult implements Comparable<SearchResult> {
 		return this.path;
 	}
 
+	public void addCount(int count) {
+		this.count += count;
+	}
+
+	public void setFirstPosition(int position) {
+		this.firstPosition = position;
+	}
 }

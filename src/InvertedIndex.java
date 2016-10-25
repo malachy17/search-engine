@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -71,42 +71,35 @@ public class InvertedIndex {
 	 * @param query
 	 * @return
 	 */
-	public ArrayList<SearchResult> exactSearch(String query) {
-		// TODO Double check StackOverflow if ArrayList or LinkedList is better for sorting
+	public ArrayList<SearchResult> exactSearch(String[] query) {
 		ArrayList<SearchResult> list = new ArrayList<>();
-		
-		// TODO Use a map!
-//		Map<String, SearchResult> map = ???
 
-		// Goes through each query.
-		String[] words = query.split(" "); // TODO Take already split queries as input (data structures tend not to do string parsing)
+		HashMap<String, SearchResult> map = new HashMap<>();
 
 		// Goes through each word in this query.
-		for (String word : words) {
+		for (String word : query) {
 			if (index.containsKey(word)) {
 
 				for (String file : index.get(word).keySet()) {
 					int count = index.get(word).get(file).size();
 					int firstPosition = index.get(word).get(file).first();
 
-					// TODO
-//					if we have seen this result before (if we have the file as a key in our map)
-//						update the already existing result
-//					else
-//						add the file, and a new result to the map
-						
-						list.add(new SearchResult(count, firstPosition, file));
+					// If the file exists, updates the SearchResult, else adds a
+					// new SearchResult to the map.
+					if (map.containsKey(file)) {
+						map.get(file).addCount(count);
+						if (firstPosition < map.get(file).getFirstPosition()) {
+							map.get(file).setFirstPosition(firstPosition);
+						}
+					} else {
+						map.put(file, new SearchResult(count, firstPosition, file));
+					}
 				}
-
 			}
 		}
 
-		list = merge(list);
-		
-		// TODO
-//		list.addAll(map.values());
-		
-		
+		// Puts all of the maps SearchResults into a list.
+		list.addAll(map.values());
 		Collections.sort(list);
 		return list;
 	}
@@ -119,14 +112,13 @@ public class InvertedIndex {
 	 * @param query
 	 * @return
 	 */
-	public ArrayList<SearchResult> partialSearch(String query) {
+	public ArrayList<SearchResult> partialSearch(String[] query) {
 		ArrayList<SearchResult> list = new ArrayList<>();
 
-		// Goes through each query.
-		String[] prefixes = query.split(" ");
+		HashMap<String, SearchResult> map = new HashMap<>();
 
 		// Goes through each word in this query.
-		for (String prefix : prefixes) {
+		for (String prefix : query) {
 
 			// Goes through each key in the tailMap of the index.
 			for (String indexWord : index.tailMap(prefix).keySet()) {
@@ -140,56 +132,23 @@ public class InvertedIndex {
 					int count = index.get(indexWord).get(file).size();
 					int firstPosition = index.get(indexWord).get(file).first();
 
-					list.add(new SearchResult(count, firstPosition, file));
-				}
-			}
-		}
-
-		list = merge(list);
-		Collections.sort(list);
-		return list;
-	}
-
-	/**
-	 * Finds SearchResult objects in the results ArrayList that share the same
-	 * file, and combines their data into one SearchResult object. Adds this
-	 * SearchResult object and unaffected SearchResult objects into a new
-	 * ArrayList.
-	 * 
-	 * @param results
-	 * @return
-	 */
-	private ArrayList<SearchResult> merge(ArrayList<SearchResult> results) {
-		// The perfected ArrayList to be returned.
-		ArrayList<SearchResult> newResults = new ArrayList<>();
-
-		// Store all files found in results.
-		HashSet<String> files = new HashSet<String>();
-		for (SearchResult result : results) {
-			files.add(result.getPath());
-		}
-
-		// For each file, get all the words in results that have that
-		// file, and combine the data to create 1 SearchResult object
-		// per file.
-		for (String file : files) {
-			int totalCount = 0;
-			int firstPosition = -1;
-
-			for (SearchResult result : results) {
-
-				if (result.getPath().equals(file)) {
-					totalCount += result.getCount();
-
-					if ((firstPosition == -1) || (result.getFirstPosition() < firstPosition)) {
-						firstPosition = result.getFirstPosition();
+					// If the file exists, updates the SearchResult, else adds a
+					// new SearchResult to the map.
+					if (map.containsKey(file)) {
+						map.get(file).addCount(count);
+						if (firstPosition < map.get(file).getFirstPosition()) {
+							map.get(file).setFirstPosition(firstPosition);
+						}
+					} else {
+						map.put(file, new SearchResult(count, firstPosition, file));
 					}
 				}
 			}
-
-			newResults.add(new SearchResult(totalCount, firstPosition, file));
 		}
 
-		return newResults;
+		// Puts all of the maps SearchResults into a list.
+		list.addAll(map.values());
+		Collections.sort(list);
+		return list;
 	}
 }

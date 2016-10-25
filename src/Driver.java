@@ -1,8 +1,6 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.TreeMap;
 
 /**
  * Goes through a given directory and documents all words in every text file
@@ -28,7 +26,8 @@ public class Driver {
 
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex index = new InvertedIndex();
-		TreeMap<String, ArrayList<SearchResult>> resultMap = null;
+
+		QueryHelper qHelp = new QueryHelper(index);
 
 		if (parser.hasFlag("-dir")) {
 			try {
@@ -53,7 +52,7 @@ public class Driver {
 		if (parser.hasFlag("-exact")) {
 			try {
 				Path file = Paths.get(parser.getValue("-exact"));
-				resultMap = QueryHelper.parseQueryExact(file, index);
+				qHelp.parseQuery(file, true);
 			} catch (IOException e) {
 				System.err.println("Unable to use path.");
 			} catch (NullPointerException e) {
@@ -66,7 +65,7 @@ public class Driver {
 		if (parser.hasFlag("-query")) {
 			try {
 				Path file = Paths.get(parser.getValue("-query"));
-				resultMap = QueryHelper.parseQueryPartial(file, index);
+				qHelp.parseQuery(file, false);
 			} catch (IOException e) {
 				System.err.println("Unable to use path.");
 			} catch (NullPointerException e) {
@@ -79,7 +78,7 @@ public class Driver {
 		if (parser.hasFlag("-results")) {
 			try {
 				Path outFile = Paths.get(parser.getValue("-results", "results.json"));
-				JSONWriter.writeSearchResults(outFile, resultMap);
+				qHelp.toJSON(outFile);
 			} catch (IOException e) {
 				System.err.println("Unable to use path.");
 			} catch (NullPointerException e) {
