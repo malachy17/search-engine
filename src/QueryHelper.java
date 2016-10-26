@@ -7,9 +7,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeMap;
 
+/**
+ * A class that contains both a map of queries to SearchResult objects and an
+ * index that is used as the database to search the queries in. It also contains
+ * a parseQuery method to parse the given query, find all valid locations in the
+ * InvertedIndex and fill up the map with queries and their respective list of
+ * SearchResult objects.
+ */
 public class QueryHelper {
 
+	// A map to store query searches to a list of SearchResult objects.
 	private final TreeMap<String, ArrayList<SearchResult>> map;
+	// The inverted index of all words found in all files.
 	private final InvertedIndex index;
 
 	public QueryHelper(InvertedIndex index) {
@@ -48,10 +57,12 @@ public class QueryHelper {
 	}
 
 	/**
-	 * Cleans the query.
+	 * Cleans the given String by trimming, making lower case, and removing
+	 * punctuation.
 	 * 
 	 * @param line
-	 * @return
+	 *            the String to be cleaned.
+	 * @return the cleaned String.
 	 */
 	private static String clean(String line) {
 		line = line.trim();
@@ -61,10 +72,11 @@ public class QueryHelper {
 	}
 
 	/**
-	 * Rearranges the words in the query alphabetically.
+	 * Rearranges the words in the given String alphabetically.
 	 * 
 	 * @param line
-	 * @return
+	 *            the String to be rearranged alphabetically.
+	 * @return the cleaned String.
 	 */
 	private static String rearrange(String line) {
 		String[] words = line.split("\\s+");
@@ -73,6 +85,14 @@ public class QueryHelper {
 		return line;
 	}
 
+	/**
+	 * Sends a path and a map of queries to be printed in JSON by the JSONWriter
+	 * class.
+	 * 
+	 * @param output
+	 *            the location that the map in JSON will be printed to.
+	 * @throws IOException
+	 */
 	public void toJSON(Path output) throws IOException {
 		JSONWriter.writeSearchResults(output, map);
 	}

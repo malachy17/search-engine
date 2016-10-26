@@ -64,12 +64,13 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Searches index for the word or words in the query, and puts the necessary
-	 * data into a SearchResult object, which is place into an ArrayList and
-	 * returned.
+	 * Searches index for the exact word or words in the query, and puts that
+	 * word's location in terms of file, count, and size into a SearchResult
+	 * object, which is placed into an ArrayList and then returned.
 	 * 
 	 * @param query
-	 * @return
+	 *            an array of search queries or a query.
+	 * @return a list of SearchResult objects.
 	 */
 	public ArrayList<SearchResult> exactSearch(String[] query) {
 		ArrayList<SearchResult> list = new ArrayList<>();
@@ -105,12 +106,14 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Searches index for the words that start with the prefix or prefixes in
-	 * the query, and puts the necessary data into a SearchResult object, which
-	 * is place into an ArrayList and returned.
+	 * Searches index for a word or words that start with the prefix or prefixes
+	 * given in the query, and puts those word's or words' location in terms of
+	 * file, count, and size into a SearchResult object, which is placed into an
+	 * ArrayList and then returned.
 	 * 
 	 * @param query
-	 * @return
+	 *            an array of search queries or a query.
+	 * @return a list of SearchResult objects.
 	 */
 	public ArrayList<SearchResult> partialSearch(String[] query) {
 		ArrayList<SearchResult> list = new ArrayList<>();

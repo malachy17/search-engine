@@ -18,6 +18,17 @@ public class Driver {
 	 * "-index" flag is provided, the InvertedIndex's data will not be printed
 	 * in JSON at all.
 	 * 
+	 * Can also take in the following optional flags and following arguments.
+	 * 
+	 * "-exact" : Searches the index for the exact query or queries entered by
+	 * the user.
+	 * 
+	 * "-query" : Searches the index for words with the query or queries entered
+	 * by the user as prefixes.
+	 * 
+	 * "-results" : Prints out a map of which files words in each query can be
+	 * found in, in order of relevance.
+	 * 
 	 * @param args
 	 *            the flags and corresponding data used in creating and
 	 *            utilizing an InvertedIndex
