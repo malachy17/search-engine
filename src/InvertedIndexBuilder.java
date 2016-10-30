@@ -4,6 +4,8 @@ import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Traverses a given directory and goes through every text file, line by line
@@ -84,4 +86,26 @@ public class InvertedIndexBuilder {
 		line = line.replaceAll("\\p{Punct}+", "");
 		return line;
 	}
+
+	public static void parseHTML(LinkedList<String> queue, InvertedIndex index) {
+		String position;
+		for (String link : queue) {
+			String[] words = HTMLCleaner.fetchWords(url);
+			position = 1;
+			for (String word : words) {
+				index.add(word, link, position);
+				position++;
+			}
+		}
+	}
+
+	private static void breadthFirstSearch(String seed) {
+		LinkedList<String> queue = new LinkedList<>();
+		queue.add(seed);
+
+		while (queue.size() < 50) {
+			ArrayList<String> links = LinkParser.listLinks(seed);
+		}
+	}
+
 }
