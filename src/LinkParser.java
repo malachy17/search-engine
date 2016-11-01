@@ -34,7 +34,7 @@ public class LinkParser {
 	 * @return list of URLs found in HTML code
 	 */
 	public static ArrayList<String> listLinks(String text) {
-		System.out.println(text);
+		// System.out.println(text);
 		// list to store links
 		ArrayList<String> links = new ArrayList<String>();
 
