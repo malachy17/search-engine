@@ -1,5 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -88,9 +91,9 @@ public class InvertedIndexBuilder {
 	}
 
 	public static void parseHTML(LinkedList<String> queue, InvertedIndex index) {
-		String position;
+		int position;
 		for (String link : queue) {
-			String[] words = HTMLCleaner.fetchWords(url);
+			String[] words = HTMLCleaner.fetchWords(link);
 			position = 1;
 			for (String word : words) {
 				index.add(word, link, position);
@@ -99,13 +102,76 @@ public class InvertedIndexBuilder {
 		}
 	}
 
-	private static void breadthFirstSearch(String seed) {
+	public static LinkedList<String> breadthFirstSearch(String root) throws MalformedURLException, URISyntaxException {
 		LinkedList<String> queue = new LinkedList<>();
-		queue.add(seed);
+		queue.add(root);
 
-		while (queue.size() < 50) {
-			ArrayList<String> links = LinkParser.listLinks(seed);
+		String base, html;
+		ArrayList<String> links;
+		int pointer = 0;
+
+		do {
+			base = getBase(queue.get(pointer));
+			html = HTMLCleaner.fetchHTML(queue.get(pointer));
+			links = LinkParser.listLinks(html);
+
+			for (String link : links) {
+				if (link.startsWith("#")) {
+					links.remove(link);
+				}
+			}
+
+			for (String link : links) {
+
+				if (queue.size() >= 50) {
+					break;
+				}
+
+				link = toAbsolute(base, link);
+
+				if (queue.contains(link)) {
+					break;
+				}
+
+				queue.add(link);
+			}
+
+			pointer++;
+
+			try {
+				queue.get(pointer);
+			} catch (Exception e) {
+				e.getMessage();
+				break;
+			}
+
+		} while (queue.get(pointer) != null && queue.size() < 50);
+
+		System.out.println("queue:"); // TODO delete
+		for (String element : queue) {
+			System.out.println("\t" + element);
 		}
+
+		return queue;
 	}
 
+	private static String getBase(String urlString) throws URISyntaxException {
+		URI uri = new URI(urlString);
+		URI uriBase = uri.getPath().endsWith("/") ? uri.resolve("..") : uri.resolve(".");
+		String base = uriBase.toString();
+
+		base = base.replace(".htm", "");
+		base = base.replace(".html", "");
+		return base;
+	}
+
+	private static String toAbsolute(String base, String urlString) throws URISyntaxException {
+		URI uriString = new URI(urlString);
+		if (uriString.isAbsolute()) {
+			return uriString.toString().replaceAll("#.*", "");
+		}
+		String newURL = base + urlString; //
+		newURL = newURL.replaceAll("#.*", "");
+		return newURL;
+	}
 }

@@ -51,6 +51,15 @@ public class Driver {
 			}
 		}
 
+		if (parser.hasFlag("-url")) {
+			try {
+				String url = parser.getValue("-url");
+				InvertedIndexBuilder.parseHTML(InvertedIndexBuilder.breadthFirstSearch(url), index);
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+		}
+
 		if (parser.hasFlag("-index")) {
 			try {
 				Path outFile = Paths.get(parser.getValue("-index", "index.json"));
