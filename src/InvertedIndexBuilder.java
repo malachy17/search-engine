@@ -121,14 +121,14 @@ public class InvertedIndexBuilder {
 					break;
 				}
 
-				if (link.startsWith("#")) {
+				if (link.startsWith("#") || link.startsWith("mailto:") || link.startsWith("..")) {
 					continue;
 				}
 
 				link = refine(base, link);
 
 				if (queue.contains(link)) {
-					break;
+					continue;
 				}
 
 				queue.add(link);
@@ -138,10 +138,10 @@ public class InvertedIndexBuilder {
 
 		}
 
-		System.out.println("queue:"); // TODO delete
-		for (String element : queue) {
-			System.out.println("\t" + element);
-		}
+		// System.out.println("queue:"); // TODO delete
+		// for (String element : queue) {
+		// System.out.println("\t" + element);
+		// }
 
 		return queue;
 	}
@@ -170,7 +170,7 @@ public class InvertedIndexBuilder {
 		if (uriString.isAbsolute()) {
 			return uriString.toString().replaceAll("#.*", "");
 		}
-		String newURL = base + urlString; //
+		String newURL = base + urlString;
 		newURL = newURL.replaceAll("#.*", "");
 		return newURL;
 	}
