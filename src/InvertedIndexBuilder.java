@@ -151,9 +151,8 @@ public class InvertedIndexBuilder {
 				if (!(link.startsWith("#") || link.startsWith("mailto:") || link.startsWith(".."))) {
 					link = refine(base, link);
 
-					if (!queue.contains(link)) {
+					if (!queue.contains(link))
 						queue.add(link);
-					}
 				}
 			}
 
@@ -180,6 +179,7 @@ public class InvertedIndexBuilder {
 		} catch (Exception e) {
 			return false;
 		}
+
 		return true;
 	}
 
