@@ -31,7 +31,7 @@ public class SearchResult implements Comparable<SearchResult> {
 			return Integer.compare(this.firstPosition, other.firstPosition);
 		}
 
-		return this.path.compareToIgnoreCase(other.path);
+		return this.path.compareTo(other.path);
 	}
 
 	/**
