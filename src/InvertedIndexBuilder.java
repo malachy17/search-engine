@@ -110,16 +110,10 @@ public class InvertedIndexBuilder {
 		ArrayList<String> links;
 		int pointer = 0;
 
-		do {
+		while (queue.size() < 50 && queueHasNext(queue, pointer)) {
 			base = getBase(queue.get(pointer));
 			html = HTMLCleaner.fetchHTML(queue.get(pointer));
 			links = LinkParser.listLinks(html);
-
-			for (String link : links) {
-				if (link.startsWith("#")) {
-					links.remove(link);
-				}
-			}
 
 			for (String link : links) {
 
@@ -127,7 +121,11 @@ public class InvertedIndexBuilder {
 					break;
 				}
 
-				link = toAbsolute(base, link);
+				if (link.startsWith("#")) {
+					continue;
+				}
+
+				link = refine(base, link);
 
 				if (queue.contains(link)) {
 					break;
@@ -138,14 +136,7 @@ public class InvertedIndexBuilder {
 
 			pointer++;
 
-			try {
-				queue.get(pointer);
-			} catch (Exception e) {
-				e.getMessage();
-				break;
-			}
-
-		} while (queue.get(pointer) != null && queue.size() < 50);
+		}
 
 		System.out.println("queue:"); // TODO delete
 		for (String element : queue) {
@@ -153,6 +144,15 @@ public class InvertedIndexBuilder {
 		}
 
 		return queue;
+	}
+
+	private static boolean queueHasNext(LinkedList<String> queue, int pointer) {
+		try {
+			queue.get(pointer);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 
 	private static String getBase(String urlString) throws URISyntaxException {
@@ -165,7 +165,7 @@ public class InvertedIndexBuilder {
 		return base;
 	}
 
-	private static String toAbsolute(String base, String urlString) throws URISyntaxException {
+	private static String refine(String base, String urlString) throws URISyntaxException {
 		URI uriString = new URI(urlString);
 		if (uriString.isAbsolute()) {
 			return uriString.toString().replaceAll("#.*", "");
