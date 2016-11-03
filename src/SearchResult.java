@@ -10,6 +10,13 @@ public class SearchResult implements Comparable<SearchResult> {
 
 	private final String path;
 
+	/**
+	 * TODO
+	 * 
+	 * @param count
+	 * @param firstPosition
+	 * @param path
+	 */
 	public SearchResult(int count, int firstPosition, String path) {
 		this.count = count;
 		this.firstPosition = firstPosition;
@@ -71,7 +78,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	 * @param position
 	 *            The new position to replace this object's firstPosition.
 	 */
-	public void setFirstPosition(int position) {
+	public void setFirstPosition(int position) { // TODO only do this if position is less than firstPosition
 		this.firstPosition = position;
 	}
 }
