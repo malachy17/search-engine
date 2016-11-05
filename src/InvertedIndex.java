@@ -81,6 +81,7 @@ public class InvertedIndex {
 		for (String word : query) {
 			if (index.containsKey(word)) {
 
+				// TODO Make a helper method
 				for (String file : index.get(word).keySet()) {
 					int count = index.get(word).get(file).size();
 					int firstPosition = index.get(word).get(file).first();
@@ -89,18 +90,25 @@ public class InvertedIndex {
 					// new SearchResult to the map.
 					if (map.containsKey(file)) {
 						map.get(file).addCount(count);
-						if (firstPosition < map.get(file).getFirstPosition()) {
+						if (firstPosition < map.get(file).getFirstPosition()) { // TODO Move check into setFirstPosition
 							map.get(file).setFirstPosition(firstPosition);
 						}
 					} else {
 						map.put(file, new SearchResult(count, firstPosition, file));
+						// TODO add to the list here
+						
+						/*
+						 * SearchResult result = new SearchResult(count, firstPosition, file);
+						 * map.put(file, result)
+						 * list.put(result)
+						 */
 					}
 				}
 			}
 		}
 
 		// Puts all of the maps SearchResults into a list.
-		list.addAll(map.values());
+		list.addAll(map.values());// remove this
 		Collections.sort(list);
 		return list;
 	}

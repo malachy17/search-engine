@@ -33,7 +33,7 @@ public class LinkParser {
 	 *            links
 	 * @return list of URLs found in HTML code
 	 */
-	public static ArrayList<String> listLinks(String text) {
+	public static ArrayList<String> listLinks(String text) { // TODO Add base URL here
 		// System.out.println(text);
 		// list to store links
 		ArrayList<String> links = new ArrayList<String>();
@@ -46,6 +46,12 @@ public class LinkParser {
 
 		// loop through every match found in text
 		while (m.find()) {
+			
+			// TODO Pull out the URL (m.group(GROUP))
+			// TODO Convert to absolute: https://github.com/usf-cs212-2016/usf-cs212-2016.github.io/wiki/Project-3#relative-urls
+			// TODO Remove fragments new URL(old.getProtocol(), old.getHost(), old.getFile())
+			
+			
 			// add the appropriate group from regular expression to list
 			links.add(m.group(GROUP));
 		}

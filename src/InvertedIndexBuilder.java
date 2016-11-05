@@ -73,7 +73,7 @@ public class InvertedIndexBuilder {
 			}
 		}
 	}
-
+	
 	/**
 	 * For a given line: trims leading and trailing whitespace, converts all
 	 * letters to lower-case, and replaces all illegal chars such as punctuation
@@ -83,13 +83,15 @@ public class InvertedIndexBuilder {
 	 *            the line being cleaned.
 	 * @return the cleaned line.
 	 */
-	private static String clean(String line) {
+	private static String clean(String line) { // TODO Could make this public so you can access it in other classes
 		line = line.trim();
 		line = line.toLowerCase();
 		line = line.replaceAll("\\p{Punct}+", "");
 		return line;
 	}
 
+	// TODO Move web crawling stuff out to a WebCrawler class
+	
 	/**
 	 * Parses the HTML from a URL in a given queue and gets every word in each
 	 * line. Each legal word is then added to the given index.
@@ -132,7 +134,7 @@ public class InvertedIndexBuilder {
 	 */
 	public static LinkedList<String> breadthFirstSearch(String root)
 			throws URISyntaxException, UnknownHostException, IOException {
-		LinkedList<String> queue = new LinkedList<>();
+		LinkedList<String> queue = new LinkedList<>(); // TODO Make this a member of your WebCrawler
 		queue.add(root);
 
 		String base, html;
@@ -142,7 +144,7 @@ public class InvertedIndexBuilder {
 		while (queue.size() < 50 && queueHasNext(queue, pointer)) {
 			base = getBase(queue.get(pointer));
 			html = HTTPFetcher.fetchHTML(queue.get(pointer));
-			links = LinkParser.listLinks(html);
+			links = LinkParser.listLinks(html); // TODO Pass in the root url here
 
 			for (String link : links) {
 				if (queue.size() >= 50)
@@ -201,6 +203,8 @@ public class InvertedIndexBuilder {
 		base = base.replace(".htm", "");
 
 		return base;
+		
+		// TODO ?? Shouldn't need...
 	}
 
 	/**

@@ -45,7 +45,7 @@ public class QueryHelper {
 				line = QueryHelper.clean(line);
 				line = QueryHelper.rearrange(line);
 
-				String[] lineArray = line.split(" ");
+				String[] lineArray = line.split(" "); // TODO Split happens twice, once in rearrange and again here
 
 				if (exact == true) {
 					map.put(line, index.exactSearch(lineArray));
@@ -71,6 +71,7 @@ public class QueryHelper {
 		return line;
 	}
 
+	// TODO Integrate this into the parseQuery method for efficiency sake
 	/**
 	 * Rearranges the words in the given String alphabetically.
 	 * 
