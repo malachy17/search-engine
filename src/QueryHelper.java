@@ -42,48 +42,20 @@ public class QueryHelper {
 
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 			while ((line = reader.readLine()) != null) {
-				line = QueryHelper.clean(line);
-				line = QueryHelper.rearrange(line);
+				line = InvertedIndexBuilder.clean(line);
 
-				String[] lineArray = line.split(" "); // TODO Split happens twice, once in rearrange and again here
+				String[] words = line.split("\\s+");
+				Arrays.sort(words);
+				line = String.join(" ", words);
+				words = line.split(" "); // TODO split happening twice.
 
 				if (exact == true) {
-					map.put(line, index.exactSearch(lineArray));
+					map.put(line, index.exactSearch(words));
 				} else {
-					map.put(line, index.partialSearch(lineArray));
+					map.put(line, index.partialSearch(words));
 				}
 			}
 		}
-	}
-
-	/**
-	 * Cleans the given String by trimming, making lower case, and removing
-	 * punctuation.
-	 * 
-	 * @param line
-	 *            the String to be cleaned.
-	 * @return the cleaned String.
-	 */
-	private static String clean(String line) {
-		line = line.trim();
-		line = line.toLowerCase();
-		line = line.replaceAll("\\p{Punct}+", "");
-		return line;
-	}
-
-	// TODO Integrate this into the parseQuery method for efficiency sake
-	/**
-	 * Rearranges the words in the given String alphabetically.
-	 * 
-	 * @param line
-	 *            the String to be rearranged alphabetically.
-	 * @return the cleaned String.
-	 */
-	private static String rearrange(String line) {
-		String[] words = line.split("\\s+");
-		Arrays.sort(words);
-		line = String.join(" ", words);
-		return line;
 	}
 
 	/**

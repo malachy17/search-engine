@@ -11,11 +11,15 @@ public class SearchResult implements Comparable<SearchResult> {
 	private final String path;
 
 	/**
-	 * TODO
+	 * Constructor for a SearchResult object.
 	 * 
 	 * @param count
+	 *            the frequency of the SearchResult in a given file.
 	 * @param firstPosition
+	 *            the first position the SearchResult is found in in a given
+	 *            file.
 	 * @param path
+	 *            the file that this SearchResult is found in.
 	 */
 	public SearchResult(int count, int firstPosition, String path) {
 		this.count = count;
@@ -78,7 +82,9 @@ public class SearchResult implements Comparable<SearchResult> {
 	 * @param position
 	 *            The new position to replace this object's firstPosition.
 	 */
-	public void setFirstPosition(int position) { // TODO only do this if position is less than firstPosition
-		this.firstPosition = position;
+	public void setFirstPosition(int position) {
+		if (position < firstPosition) {
+			this.firstPosition = position;
+		}
 	}
 }

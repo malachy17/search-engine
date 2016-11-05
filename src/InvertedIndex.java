@@ -80,35 +80,10 @@ public class InvertedIndex {
 		// Goes through each word in this query.
 		for (String word : query) {
 			if (index.containsKey(word)) {
-
-				// TODO Make a helper method
-				for (String file : index.get(word).keySet()) {
-					int count = index.get(word).get(file).size();
-					int firstPosition = index.get(word).get(file).first();
-
-					// If the file exists, updates the SearchResult, else adds a
-					// new SearchResult to the map.
-					if (map.containsKey(file)) {
-						map.get(file).addCount(count);
-						if (firstPosition < map.get(file).getFirstPosition()) { // TODO Move check into setFirstPosition
-							map.get(file).setFirstPosition(firstPosition);
-						}
-					} else {
-						map.put(file, new SearchResult(count, firstPosition, file));
-						// TODO add to the list here
-						
-						/*
-						 * SearchResult result = new SearchResult(count, firstPosition, file);
-						 * map.put(file, result)
-						 * list.put(result)
-						 */
-					}
-				}
+				createSearchResultList(list, map, word);
 			}
 		}
 
-		// Puts all of the maps SearchResults into a list.
-		list.addAll(map.values());// remove this
 		Collections.sort(list);
 		return list;
 	}
@@ -132,34 +107,35 @@ public class InvertedIndex {
 		for (String prefix : query) {
 
 			// Goes through each key in the tailMap of the index.
-			for (String indexWord : index.tailMap(prefix).keySet()) {
+			for (String word : index.tailMap(prefix).keySet()) {
 
-				if (!indexWord.startsWith(prefix)) {
+				if (!word.startsWith(prefix)) {
 					break;
 				}
 
-				// Goes through each file in this key.
-				for (String file : index.get(indexWord).keySet()) {
-					int count = index.get(indexWord).get(file).size();
-					int firstPosition = index.get(indexWord).get(file).first();
-
-					// If the file exists, updates the SearchResult, else adds a
-					// new SearchResult to the map.
-					if (map.containsKey(file)) {
-						map.get(file).addCount(count);
-						if (firstPosition < map.get(file).getFirstPosition()) {
-							map.get(file).setFirstPosition(firstPosition);
-						}
-					} else {
-						map.put(file, new SearchResult(count, firstPosition, file));
-					}
-				}
+				createSearchResultList(list, map, word);
 			}
 		}
 
-		// Puts all of the maps SearchResults into a list.
-		list.addAll(map.values());
 		Collections.sort(list);
 		return list;
+	}
+
+	private void createSearchResultList(ArrayList<SearchResult> list, HashMap<String, SearchResult> map, String word) {
+		for (String file : index.get(word).keySet()) {
+			int count = index.get(word).get(file).size();
+			int firstPosition = index.get(word).get(file).first();
+
+			// If the file exists, updates the SearchResult, else adds a
+			// new SearchResult to the map and list.
+			if (map.containsKey(file)) {
+				map.get(file).addCount(count);
+				map.get(file).setFirstPosition(firstPosition);
+			} else {
+				SearchResult result = new SearchResult(count, firstPosition, file);
+				map.put(file, result);
+				list.add(result);
+			}
+		}
 	}
 }
