@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -55,25 +54,18 @@ public class WebCrawler {
 
 		queue.add(root);
 
-		String base, html;
 		ArrayList<String> links;
 		int pointer = 0;
 
 		while (queue.size() < 50 && queueHasNext(pointer)) {
-			base = getBase(queue.get(pointer));
-			html = HTTPFetcher.fetchHTML(queue.get(pointer));
-			links = LinkParser.listLinks(html); // TODO Pass in the root url
-												// here
+			links = LinkParser.listLinks(queue.get(pointer));
 
 			for (String link : links) {
-				if (queue.size() >= 50)
+				if (queue.size() >= 50) {
 					break;
-
-				if (!(link.startsWith("#") || link.startsWith("mailto:") || link.startsWith(".."))) {
-					link = refine(base, link);
-
-					if (!queue.contains(link))
-						queue.add(link);
+				}
+				if (!queue.contains(link)) {
+					queue.add(link);
 				}
 			}
 
@@ -100,52 +92,4 @@ public class WebCrawler {
 
 		return true;
 	}
-
-	/**
-	 * Returns the base of the given urlString by getting it's parent and
-	 * removing the ".html" or ".htm" tag.
-	 * 
-	 * @param stringUrl
-	 *            the URL in String format, whose base will be returned.
-	 * @return the base of the given URL.
-	 * @throws URISyntaxException
-	 */
-	private String getBase(String stringUrl) throws URISyntaxException {
-		URI uri = new URI(stringUrl);
-		URI uriBase = uri.getPath().endsWith("/") ? uri.resolve("..") : uri.resolve(".");
-
-		String base = uriBase.toString();
-		base = base.replace(".html", "");
-		base = base.replace(".htm", "");
-
-		return base;
-
-		// TODO ?? Shouldn't need...
-	}
-
-	/**
-	 * Properly encodes URLs, by using URI. Changes relative URLs to absolute
-	 * URLs. Removes fragments off the ends of URLs.
-	 * 
-	 * @param base
-	 *            the URL base (parent) for the given URL String.
-	 * @param stringUrl
-	 *            the URL in String format that gets refined.
-	 * 
-	 * @return the properly encoded and absolute version of the given URL with
-	 *         fragments removed.
-	 * 
-	 * @throws URISyntaxException
-	 */
-	private String refine(String base, String stringUrl) throws URISyntaxException {
-		stringUrl = stringUrl.replaceAll("#.*", "");
-		URI uriString = new URI(stringUrl);
-
-		if (uriString.isAbsolute()) {
-			return uriString.toString();
-		}
-
-		return base + stringUrl;
-	}
-
 }

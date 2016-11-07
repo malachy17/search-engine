@@ -1,3 +1,7 @@
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,13 +32,18 @@ public class LinkParser {
 	/**
 	 * Parses the provided text for HTML links.
 	 *
-	 * @param text
-	 *            - valid HTML code, with quoted attributes and URL encoded
-	 *            links
+	 * @param url
+	 *            the url whose text will be searched for links.
 	 * @return list of URLs found in HTML code
+	 * @throws IOException
+	 * @throws MalformedURLException
+	 * @throws UnknownHostException
 	 */
-	public static ArrayList<String> listLinks(String text) { // TODO Add base URL here
+	public static ArrayList<String> listLinks(String url)
+			throws UnknownHostException, MalformedURLException, IOException {
+		String text = HTTPFetcher.fetchHTML(url);
 		// System.out.println(text);
+
 		// list to store links
 		ArrayList<String> links = new ArrayList<String>();
 
@@ -44,16 +53,26 @@ public class LinkParser {
 		// match provided text against regular expression
 		Matcher m = p.matcher(text.replaceAll("\\s", ""));
 
+		String strLink;
+		URL link, absolute, base = new URL(url);
+
 		// loop through every match found in text
 		while (m.find()) {
-			
-			// TODO Pull out the URL (m.group(GROUP))
-			// TODO Convert to absolute: https://github.com/usf-cs212-2016/usf-cs212-2016.github.io/wiki/Project-3#relative-urls
-			// TODO Remove fragments new URL(old.getProtocol(), old.getHost(), old.getFile())
-			
-			
+
+			// Get this URL.
+			strLink = m.group(GROUP);
+
+			// Convert the URL to an abolute URL.
+			absolute = new URL(base, strLink);
+
+			// Remove the URL's fragments.
+			link = new URL(absolute.getProtocol(), absolute.getHost(), absolute.getFile());
+
+			// Convert the URL to a String.
+			strLink = link.toString();
+
 			// add the appropriate group from regular expression to list
-			links.add(m.group(GROUP));
+			links.add(strLink);
 		}
 
 		return links;
