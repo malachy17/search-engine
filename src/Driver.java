@@ -54,9 +54,9 @@ public class Driver {
 		if (parser.hasFlag("-url")) {
 			try {
 				String url = parser.getValue("-url");
-				WebCrawler crawler = new WebCrawler();
+				WebCrawler crawler = new WebCrawler(index); // changed
 				crawler.breadthFirstSearch(url);
-				crawler.parseHTML(index);
+				// crawler.parseHTML(index);
 			} catch (Exception e) {
 				System.err.println(e.getMessage());
 			}

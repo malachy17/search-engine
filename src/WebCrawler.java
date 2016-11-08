@@ -1,36 +1,18 @@
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Queue;
 
 public class WebCrawler {
 
-	private LinkedList<String> queue;
+	private final InvertedIndex index;
 
-	public WebCrawler() {
-		queue = new LinkedList<>();
-	}
-
-	/**
-	 * Parses the HTML from a URL in a given queue and gets every word in each
-	 * line. Each legal word is then added to the given index.
-	 * 
-	 * @param index
-	 *            the InvertedIndex data structure that will add each word.
-	 */
-	public void parseHTML(InvertedIndex index) {
-		int position;
-
-		for (String link : queue) {
-			String[] words = HTMLCleaner.fetchWords(link);
-			position = 1;
-
-			for (String word : words) {
-				index.add(word, link, position);
-				position++;
-			}
-		}
+	public WebCrawler(InvertedIndex index) {
+		this.index = index;
 	}
 
 	/**
@@ -45,51 +27,50 @@ public class WebCrawler {
 	 *            search from.
 	 * 
 	 * @return A LinkedList of URLs in String format.
+	 * @throws MalformedURLException
 	 * 
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 * @throws UnknownHostException
 	 */
-	public void breadthFirstSearch(String root) throws URISyntaxException, UnknownHostException, IOException {
+	public void breadthFirstSearch(String root) throws UnknownHostException, MalformedURLException, IOException {
+		Queue<String> queue = new LinkedList<>();
+		HashSet<String> set = new HashSet<>();
 
+		set.add(root);
 		queue.add(root);
 
+		String seed;
 		ArrayList<String> links;
-		int pointer = 0;
 
-		while (queue.size() < 50 && queueHasNext(pointer)) {
-			links = LinkParser.listLinks(queue.get(pointer));
+		while (!queue.isEmpty() && set.size() != 50) {
+			seed = queue.remove();
+			addToIndex(seed);
+			links = LinkParser.listLinks(seed);
 
 			for (String link : links) {
-				if (queue.size() >= 50) {
-					break;
-				}
-				if (!queue.contains(link)) {
+				if (!set.contains(link) && set.size() != 50) {
+					set.add(link);
 					queue.add(link);
 				}
 			}
-
-			pointer++;
 		}
 	}
 
 	/**
-	 * Checks if the given LinkedList contains a String at the given location.
+	 * Parses the HTML from a URL in a given queue and gets every word in each
+	 * line. Each legal word is then added to the given index.
 	 * 
-	 * @param location
-	 *            the location in the LinkedList that will be checked for an
-	 *            existing String.
-	 * 
-	 * @return true if LinkedList contains a String at the given position, false
-	 *         if it does not.
+	 * @param index
+	 *            the InvertedIndex data structure that will add each word.
 	 */
-	private boolean queueHasNext(int location) {
-		try {
-			queue.get(location);
-		} catch (Exception e) {
-			return false;
-		}
+	private void addToIndex(String link) {
+		String[] words = HTMLCleaner.fetchWords(link);
+		int position = 1;
 
-		return true;
+		for (String word : words) {
+			index.add(word, link, position);
+			position++;
+		}
 	}
 }
