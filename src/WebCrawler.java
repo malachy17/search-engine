@@ -6,11 +6,30 @@ import java.util.LinkedList;
 
 public class WebCrawler {
 
-	private LinkedList<String> queue;
+	// TODO Make the InvertedIndex a parameter to the WebCrawler constructor and an instance member
+	
+	private LinkedList<String> queue; // TODO Use final where appropriate?
+	
+	// TODO private final Set<String> urls;
 
 	public WebCrawler() {
 		queue = new LinkedList<>();
 	}
+	
+	/*
+	public void addSeed(String url) {
+		if we haven't already parsed the max number of links and this is a unique link (check set):
+			add the link to the queue and to the set
+		
+		while (queue.hasNext()) {
+			String current = queue.remove();
+			
+			String html = HTTPFetcher.fetchHTML(current);
+			parseLinks(current, html) which will get all of the links, for each link decide if it should be added to the queue and set
+			parseHTML(html)
+		}
+	}
+	*/
 
 	/**
 	 * Parses the HTML from a URL in a given queue and gets every word in each
@@ -19,7 +38,7 @@ public class WebCrawler {
 	 * @param index
 	 *            the InvertedIndex data structure that will add each word.
 	 */
-	public void parseHTML(InvertedIndex index) {
+	public void parseHTML(InvertedIndex index) { // TODO Instead of the InvertedIndex as a parameter, take the HTML that has already been downloaded
 		int position;
 
 		for (String link : queue) {
