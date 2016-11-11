@@ -42,7 +42,10 @@ public class LinkParser {
 	 */
 	public static ArrayList<String> listLinks(String url)
 			throws UnknownHostException, MalformedURLException, IOException {
-		String text = HTTPFetcher.fetchHTML(url); // TODO Downloading webpage twice, pass in the url and the already downloaded HTML?
+		String text = HTTPFetcher.fetchHTML(url); // TODO Downloading webpage
+													// twice, pass in the url
+													// and the already
+													// downloaded HTML?
 		// System.out.println(text);
 
 		// list to store links
@@ -52,7 +55,7 @@ public class LinkParser {
 		Pattern p = Pattern.compile(REGEX);
 
 		// match provided text against regular expression
-		Matcher m = p.matcher(text.replaceAll("\\s", "")); // TODO Do not replace?
+		Matcher m = p.matcher(text);
 
 		// TODO Discouraged code style
 		String strLink;
