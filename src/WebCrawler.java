@@ -1,70 +1,54 @@
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Set;
 
 public class WebCrawler {
 
 	private final InvertedIndex index;
+	private final LinkedList<String> queue;
+	private final Set<String> urls;
 
 	public WebCrawler(InvertedIndex index) {
 		this.index = index;
+		this.queue = new LinkedList<>();
+		this.urls = new HashSet<>();
 	}
 
-	/**
-	 * Searches a given String representing a URL linked to a HTML web-page and
-	 * adds it to a LinkedList. Then performs a breadth-first search on this
-	 * root URL and adds found URL links to the LinkedList in breadth-first
-	 * search order. It stops when there are no more URLs to add, or when the
-	 * LinkedList's size reaches 50. Then, the LinkedList is returned.
+	/*
+	 * public void addSeed(String url) { if we haven't already parsed the max
+	 * number of links and this is a unique link (check set): add the link to
+	 * the queue and to the set
 	 * 
-	 * @param root
-	 *            the given String which the method starts its breadth-first
-	 *            search from.
+	 * while (queue.hasNext()) { String current = queue.remove();
 	 * 
-	 * @return A LinkedList of URLs in String format.
-	 * @throws MalformedURLException
-	 * 
-	 * @throws URISyntaxException
-	 * @throws IOException
-	 * @throws UnknownHostException
+	 * String html = HTTPFetcher.fetchHTML(current); parseLinks(current, html)
+	 * which will get all of the links, for each link decide if it should be
+	 * added to the queue and set parseHTML(html) } }
 	 */
-	public void breadthFirstSearch(String root) throws UnknownHostException, MalformedURLException, IOException {
-		Queue<String> queue = new LinkedList<>();
-		HashSet<String> set = new HashSet<>();
+	public void addSeed(String seed) throws UnknownHostException, MalformedURLException, IOException {
+		urls.add(seed);
+		queue.add(seed);
 
-		set.add(root);
-		queue.add(root);
-
-		String seed;
-		ArrayList<String> links;
-
-		while (!queue.isEmpty() && set.size() != 50) {
-			seed = queue.remove();
-			addToIndex(seed);
-			links = LinkParser.listLinks(seed);
+		while (!queue.isEmpty()) {
+			String current = queue.remove();
+			// String html = HTTPFetcher.fetchHTML(current);
+			sendToIndex(current);
+			ArrayList<String> links = LinkParser.listLinks(current);
 
 			for (String link : links) {
-				if (!set.contains(link) && set.size() != 50) {
-					set.add(link);
+				if (!urls.contains(link) && urls.size() != 50) {
+					urls.add(link);
 					queue.add(link);
 				}
 			}
 		}
 	}
 
-	/**
-	 * Parses the HTML from a URL in a given queue and gets every word in each
-	 * line. Each legal word is then added to the given index.
-	 * 
-	 * @param index
-	 *            the InvertedIndex data structure that will add each word.
-	 */
-	private void addToIndex(String link) {
+	private void sendToIndex(String link) {
 		String[] words = HTMLCleaner.fetchWords(link);
 		int position = 1;
 

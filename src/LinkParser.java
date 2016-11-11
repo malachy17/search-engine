@@ -23,6 +23,7 @@ public class LinkParser {
 	 * The regular expression used to parse the HTML for links.
 	 */
 	public static final String REGEX = "(?i)<a([^>]*?)(href)=\"(.+?)\"";
+	// TODO Remove extra groups and update number below
 
 	/**
 	 * The group in the regular expression that captures the raw link.
@@ -41,7 +42,10 @@ public class LinkParser {
 	 */
 	public static ArrayList<String> listLinks(String url)
 			throws UnknownHostException, MalformedURLException, IOException {
-		String text = HTTPFetcher.fetchHTML(url);
+		String text = HTTPFetcher.fetchHTML(url); // TODO Downloading webpage
+													// twice, pass in the url
+													// and the already
+													// downloaded HTML?
 		// System.out.println(text);
 
 		// list to store links
@@ -51,8 +55,9 @@ public class LinkParser {
 		Pattern p = Pattern.compile(REGEX);
 
 		// match provided text against regular expression
-		Matcher m = p.matcher(text.replaceAll("\\s", ""));
+		Matcher m = p.matcher(text);
 
+		// TODO Discouraged code style
 		String strLink;
 		URL link, absolute, base = new URL(url);
 
@@ -60,7 +65,7 @@ public class LinkParser {
 		while (m.find()) {
 
 			// Get this URL.
-			strLink = m.group(GROUP);
+			strLink = m.group(GROUP); // TODO Could declare within here
 
 			// Convert the URL to an abolute URL.
 			absolute = new URL(base, strLink);
