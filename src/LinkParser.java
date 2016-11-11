@@ -22,7 +22,7 @@ public class LinkParser {
 	/**
 	 * The regular expression used to parse the HTML for links.
 	 */
-	public static final String REGEX = "(?i)<a[^>]*?href=\"(.+?)\"";// hklji
+	public static final String REGEX = "(?i)<a[^>]*?href=\"(.+?)\"";
 
 	/**
 	 * The group in the regular expression that captures the raw link.
@@ -39,12 +39,10 @@ public class LinkParser {
 	 * @throws MalformedURLException
 	 * @throws UnknownHostException
 	 */
-	public static ArrayList<String> listLinks(String url)
+	public static ArrayList<String> listLinks(String text, String url) // (String
+																		// url)
 			throws UnknownHostException, MalformedURLException, IOException {
-		String text = HTTPFetcher.fetchHTML(url); // TODO Downloading webpage
-													// twice, pass in the url
-													// and the already
-													// downloaded HTML?
+		// String text = HTTPFetcher.fetchHTML(url);
 		// System.out.println(text);
 
 		// list to store links

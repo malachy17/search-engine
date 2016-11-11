@@ -29,9 +29,9 @@ public class HTMLCleaner {
 	 *            webpage to download
 	 * @return list of parsed words
 	 */
-	public static String[] fetchWords(String url) {
+	public static String[] fetchWords(String html) { // (String url)
 		// THIS METHOD IS PROVIDED FOR YOU. DO NOT MODIFY.
-		String html = fetchHTML(url);
+		// String html = fetchHTML(url);
 		String text = cleanHTML(html);
 		return parseWords(text);
 	}

@@ -35,9 +35,9 @@ public class WebCrawler {
 
 		while (!queue.isEmpty()) {
 			String current = queue.remove();
-			// String html = HTTPFetcher.fetchHTML(current);
-			sendToIndex(current);
-			ArrayList<String> links = LinkParser.listLinks(current);
+			String html = HTTPFetcher.fetchHTML(current);
+			sendToIndex(html, current);
+			ArrayList<String> links = LinkParser.listLinks(html, current);
 
 			for (String link : links) {
 				if (!urls.contains(link) && urls.size() != 50) {
@@ -48,8 +48,8 @@ public class WebCrawler {
 		}
 	}
 
-	private void sendToIndex(String link) {
-		String[] words = HTMLCleaner.fetchWords(link);
+	private void sendToIndex(String html, String link) {
+		String[] words = HTMLCleaner.fetchWords(html);
 		int position = 1;
 
 		for (String word : words) {
