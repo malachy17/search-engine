@@ -22,13 +22,12 @@ public class LinkParser {
 	/**
 	 * The regular expression used to parse the HTML for links.
 	 */
-	public static final String REGEX = "(?i)<a([^>]*?)(href)=\"(.+?)\"";
-	// TODO Remove extra groups and update number below
+	public static final String REGEX = "(?i)<a[^>]*?href=\"(.+?)\"";
 
 	/**
 	 * The group in the regular expression that captures the raw link.
 	 */
-	public static final int GROUP = 3; // TODO Change if necessary
+	public static final int GROUP = 1; // TODO Change if necessary
 
 	/**
 	 * Parses the provided text for HTML links.
@@ -57,9 +56,9 @@ public class LinkParser {
 		// match provided text against regular expression
 		Matcher m = p.matcher(text);
 
-		// TODO Discouraged code style
 		String strLink;
-		URL link, absolute, base = new URL(url);
+		URL link, absolute;
+		URL base = new URL(url);
 
 		// loop through every match found in text
 		while (m.find()) {
