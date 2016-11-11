@@ -22,7 +22,7 @@ public class LinkParser {
 	/**
 	 * The regular expression used to parse the HTML for links.
 	 */
-	public static final String REGEX = "(?i)<a[^>]*?href=\"(.+?)\"";
+	public static final String REGEX = "(?i)<a[^>]*?href=\"(.+?)\"";// hi
 
 	/**
 	 * The group in the regular expression that captures the raw link.
