@@ -1,10 +1,3 @@
-/*
- * This class does not take a particularly efficient approach, but this
- * simplifies the process of retrieving and cleaning HTML code for your
- * web crawler project later (and makes your approach easier to unit 
- * test). 
- */
-
 /**
  * A helper class with several static methods that will help fetch a webpage,
  * strip out all of the HTML, and parse the resulting plain text into words.
@@ -26,12 +19,23 @@ public class HTMLCleaner {
 	 * parses the resulting plain text into words.
 	 * 
 	 * @param url
-	 *            webpage to download
+	 *            URL to clean and parse.
 	 * @return list of parsed words
 	 */
-	public static String[] fetchWords(String html) { // (String url)
-		// THIS METHOD IS PROVIDED FOR YOU. DO NOT MODIFY.
-		// String html = fetchHTML(url);
+	public static String[] fetchWords(String url) {
+		String html = fetchHTML(url);
+		String text = cleanHTML(html);
+		return parseWords(text);
+	}
+
+	/**
+	 * Cleans the HTML tags, and parses the resulting plain text into words.
+	 * 
+	 * @param html
+	 *            html to clean and parse.
+	 * @return
+	 */
+	public static String[] fetchHTMLWords(String html) {
 		String text = cleanHTML(html);
 		return parseWords(text);
 	}
@@ -45,7 +49,6 @@ public class HTMLCleaner {
 	 * @return list of parsed words
 	 */
 	public static String[] parseWords(String text) {
-		// THIS METHOD IS PROVIDED FOR YOU. DO NOT MODIFY.
 		text = text.replaceAll(CLEAN_REGEX, "").toLowerCase().trim();
 		return text.split(SPLIT_REGEX);
 	}
@@ -59,7 +62,6 @@ public class HTMLCleaner {
 	 * @return plain text
 	 */
 	public static String cleanHTML(String html) {
-		// THIS METHOD IS PROVIDED FOR YOU. DO NOT MODIFY.
 		String text = html;
 		text = stripElement("script", text);
 		text = stripElement("style", text);
@@ -82,7 +84,7 @@ public class HTMLCleaner {
 			return HTTPFetcher.fetchHTML(link);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
-			return "bad";
+			return "Failed to fetchHTML in HTMLCleaner.";
 		}
 	}
 

@@ -6,28 +6,45 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+/**
+ * Crawls links starting from a seed URL in a breadth-first search fashion and
+ * sends all words found to an InvertedIndex to be added in.
+ */
 public class WebCrawler {
 
 	private final InvertedIndex index;
 	private final LinkedList<String> queue;
 	private final Set<String> urls;
 
+	/**
+	 * Constructor for the WebCrawler class. Takes in an InvertedIndex which is
+	 * used to send words to. Initializes a queue and set of URLs used in
+	 * addSeed.
+	 * 
+	 * @param index
+	 *            The InvertedIndex object that words from sendToIndex() will be
+	 *            sent to.
+	 */
 	public WebCrawler(InvertedIndex index) {
 		this.index = index;
 		this.queue = new LinkedList<>();
 		this.urls = new HashSet<>();
 	}
 
-	/*
-	 * public void addSeed(String url) { if we haven't already parsed the max
-	 * number of links and this is a unique link (check set): add the link to
-	 * the queue and to the set
+	/**
+	 * Starts at the seed web-page and performs a breadth-first search upon that
+	 * web-page's links, and their links and so forth until it fills a the urls
+	 * set with 50 links. Uses the set to keep track of the amount of links and
+	 * a queue to iterate each scraped link with. Sends each valid link's HTML
+	 * to the sendToIndex() method where that link's words will be passed onto
+	 * the InvertedIndex for adding.
 	 * 
-	 * while (queue.hasNext()) { String current = queue.remove();
+	 * @param seed
+	 *            The first web-page crawled, and parent to all other web-pages.
 	 * 
-	 * String html = HTTPFetcher.fetchHTML(current); parseLinks(current, html)
-	 * which will get all of the links, for each link decide if it should be
-	 * added to the queue and set parseHTML(html) } }
+	 * @throws UnknownHostException
+	 * @throws MalformedURLException
+	 * @throws IOException
 	 */
 	public void addSeed(String seed) throws UnknownHostException, MalformedURLException, IOException {
 		urls.add(seed);
@@ -48,8 +65,18 @@ public class WebCrawler {
 		}
 	}
 
+	/**
+	 * Takes in HTML and that html's absolute URL and sends each word's name,
+	 * file that it is found in, and position within the file to the
+	 * InvertedIndex to be added in.
+	 * 
+	 * @param html
+	 *            The HTML containing the words that this method will grab.
+	 * @param link
+	 *            The web-page's URL name that the word is found in.
+	 */
 	private void sendToIndex(String html, String link) {
-		String[] words = HTMLCleaner.fetchWords(html);
+		String[] words = HTMLCleaner.fetchHTMLWords(html);
 		int position = 1;
 
 		for (String word : words) {

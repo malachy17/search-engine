@@ -27,53 +27,36 @@ public class LinkParser {
 	/**
 	 * The group in the regular expression that captures the raw link.
 	 */
-	public static final int GROUP = 1; // TODO Change if necessary
+	public static final int GROUP = 1; // Change if necessary
 
 	/**
 	 * Parses the provided text for HTML links.
 	 *
+	 * @param text
+	 *            the html to match the regex against.
 	 * @param url
-	 *            the url whose text will be searched for links.
+	 *            the url used for the base.
 	 * @return list of URLs found in HTML code
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 * @throws UnknownHostException
 	 */
-	public static ArrayList<String> listLinks(String text, String url) // (String
-																		// url)
+	public static ArrayList<String> listLinks(String text, String url)
 			throws UnknownHostException, MalformedURLException, IOException {
-		// String text = HTTPFetcher.fetchHTML(url);
-		// System.out.println(text);
 
-		// list to store links
+		URL base = new URL(url);
 		ArrayList<String> links = new ArrayList<String>();
 
-		// compile string into regular expression
 		Pattern p = Pattern.compile(REGEX);
-
-		// match provided text against regular expression
 		Matcher m = p.matcher(text);
 
-		String strLink;
-		URL link, absolute;
-		URL base = new URL(url);
-
-		// loop through every match found in text
 		while (m.find()) {
+			String strLink = m.group(GROUP);
 
-			// Get this URL.
-			strLink = m.group(GROUP); // TODO Could declare within here
-
-			// Convert the URL to an abolute URL.
-			absolute = new URL(base, strLink);
-
-			// Remove the URL's fragments.
-			link = new URL(absolute.getProtocol(), absolute.getHost(), absolute.getFile());
-
-			// Convert the URL to a String.
+			URL absolute = new URL(base, strLink);
+			URL link = new URL(absolute.getProtocol(), absolute.getHost(), absolute.getFile());
 			strLink = link.toString();
 
-			// add the appropriate group from regular expression to list
 			links.add(strLink);
 		}
 
