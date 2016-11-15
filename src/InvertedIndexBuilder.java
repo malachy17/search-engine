@@ -47,7 +47,7 @@ public class InvertedIndexBuilder {
 	 *            the InvertedIndex data structure that will add in each word.
 	 * @throws IOException
 	 */
-	private static void parseFile(Path input, InvertedIndex index) throws IOException {
+	private static void parseFile(Path input, InvertedIndex index) throws IOException { // TODO Make public
 
 		try (BufferedReader reader = Files.newBufferedReader(input, Charset.forName("UTF-8"));) {
 			String line = null;

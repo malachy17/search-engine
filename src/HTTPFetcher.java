@@ -47,6 +47,7 @@ public class HTTPFetcher {
 		ArrayList<String> lines = new ArrayList<>();
 		int port = url.getPort() < 0 ? DEFAULT_PORT : url.getPort();
 
+		// TODO Add "UTF-8" to the InputStreamReader (see Piazza)
 		try (Socket socket = new Socket(url.getHost(), port);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				PrintWriter writer = new PrintWriter(socket.getOutputStream());) {
