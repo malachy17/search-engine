@@ -13,7 +13,7 @@ import java.util.Set;
 public class WebCrawler {
 
 	private final InvertedIndex index;
-	private final LinkedList<String> queue;
+	private final LinkedList<String> queue; // TODO Could store URL objects here, and return URLs in your link parser
 	private final Set<String> urls;
 
 	/**
@@ -61,6 +61,15 @@ public class WebCrawler {
 					urls.add(link);
 					queue.add(link);
 				}
+				
+				/*
+				if (urls.size() >= 50) {
+					break;
+				}
+				else if (!urls.contains(link)) {
+					add to queue and set
+				}
+				*/
 			}
 		}
 	}

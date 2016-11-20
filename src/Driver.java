@@ -108,5 +108,17 @@ public class Driver {
 				System.out.println(e.getMessage());
 			}
 		}
+		
+		/*
+		 * TODO Project 4, to get started:
+		 * 
+		 * if (parser.hasFlag("-multi")) {
+		 * 		new stuff
+		 * 
+		 * }
+		 * else {
+		 * 		old stuff
+		 * }
+		 */
 	}
 }
