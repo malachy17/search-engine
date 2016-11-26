@@ -36,89 +36,162 @@ public class Driver {
 	public static void main(String[] args) {
 
 		ArgumentParser parser = new ArgumentParser(args);
-		InvertedIndex index = new InvertedIndex();
+		InvertedIndex index;
+		QueryHelper qHelp;
 
-		QueryHelper qHelp = new QueryHelper(index);
+		int threads = 5;
 
-		if (parser.hasFlag("-dir")) {
-			try {
-				Path path = Paths.get(parser.getValue("-dir"));
-				InvertedIndexBuilder.traverse(path, index);
-			} catch (IOException e) {
-				System.err.println("Unable to traverse path.");
-			} catch (NullPointerException e) {
-				System.err.println("Enter a directory after the \"dir\" flag.");
+		if (parser.hasFlag("-multi")) {
+
+			index = new MultiInvertedIndex();
+			qHelp = new QueryHelper(index);
+
+			threads = parser.getValue("-multi", threads);
+
+			if (parser.hasFlag("-dir")) {
+				try {
+					Path path = Paths.get(parser.getValue("-dir"));
+					MultiInvertedIndexBuilder builder = new MultiInvertedIndexBuilder(index, threads);
+					builder.traverse(path);
+				} catch (IOException e) {
+					System.err.println("Unable to traverse path.");
+				} catch (NullPointerException e) {
+					System.err.println("Enter a directory after the \"dir\" flag.");
+				}
+			}
+
+			if (parser.hasFlag("-url")) {
+				try {
+					String url = parser.getValue("-url");
+					MultiWebCrawler crawler = new MultiWebCrawler(index, threads);
+					crawler.addSeed(url);
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
+			}
+
+			if (parser.hasFlag("-index")) {
+				try {
+					Path outFile = Paths.get(parser.getValue("-index", "index.json"));
+					index.toJSON(outFile);
+				} catch (Exception e) {
+					System.err.println("Unable to write to path + outputFile.");
+				}
+			}
+
+			if (parser.hasFlag("-exact")) {
+				try {
+					Path file = Paths.get(parser.getValue("-exact"));
+					qHelp.parseQuery(file, true);
+				} catch (IOException e) {
+					System.err.println("Unable to use path.");
+				} catch (NullPointerException e) {
+					System.err.println("Some data was unretrievable.");
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			}
+
+			if (parser.hasFlag("-query")) {
+				try {
+					Path file = Paths.get(parser.getValue("-query"));
+					qHelp.parseQuery(file, false);
+				} catch (IOException e) {
+					System.err.println("Unable to use path.");
+				} catch (NullPointerException e) {
+					System.err.println("Some data was unretrievable.");
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			}
+
+			if (parser.hasFlag("-results")) {
+				try {
+					Path outFile = Paths.get(parser.getValue("-results", "results.json"));
+					qHelp.toJSON(outFile);
+				} catch (IOException e) {
+					System.err.println("Unable to use path.");
+				} catch (NullPointerException e) {
+					System.err.println("Some data was unretrievable.");
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
 		}
 
-		if (parser.hasFlag("-url")) {
-			try {
-				String url = parser.getValue("-url");
-				WebCrawler crawler = new WebCrawler(index);
-				crawler.addSeed(url);
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-			}
-		}
+		else {
 
-		if (parser.hasFlag("-index")) {
-			try {
-				Path outFile = Paths.get(parser.getValue("-index", "index.json"));
-				index.toJSON(outFile);
-			} catch (Exception e) {
-				System.err.println("Unable to write to path + outputFile.");
-			}
-		}
+			index = new InvertedIndex();
+			qHelp = new QueryHelper(index);
 
-		if (parser.hasFlag("-exact")) {
-			try {
-				Path file = Paths.get(parser.getValue("-exact"));
-				qHelp.parseQuery(file, true);
-			} catch (IOException e) {
-				System.err.println("Unable to use path.");
-			} catch (NullPointerException e) {
-				System.err.println("Some data was unretrievable.");
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
+			if (parser.hasFlag("-dir")) {
+				try {
+					Path path = Paths.get(parser.getValue("-dir"));
+					InvertedIndexBuilder.traverse(path, index);
+				} catch (IOException e) {
+					System.err.println("Unable to traverse path.");
+				} catch (NullPointerException e) {
+					System.err.println("Enter a directory after the \"dir\" flag.");
+				}
 			}
-		}
 
-		if (parser.hasFlag("-query")) {
-			try {
-				Path file = Paths.get(parser.getValue("-query"));
-				qHelp.parseQuery(file, false);
-			} catch (IOException e) {
-				System.err.println("Unable to use path.");
-			} catch (NullPointerException e) {
-				System.err.println("Some data was unretrievable.");
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
+			if (parser.hasFlag("-url")) {
+				try {
+					String url = parser.getValue("-url");
+					WebCrawler crawler = new WebCrawler(index);
+					crawler.addSeed(url);
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
 			}
-		}
 
-		if (parser.hasFlag("-results")) {
-			try {
-				Path outFile = Paths.get(parser.getValue("-results", "results.json"));
-				qHelp.toJSON(outFile);
-			} catch (IOException e) {
-				System.err.println("Unable to use path.");
-			} catch (NullPointerException e) {
-				System.err.println("Some data was unretrievable.");
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
+			if (parser.hasFlag("-index")) {
+				try {
+					Path outFile = Paths.get(parser.getValue("-index", "index.json"));
+					index.toJSON(outFile);
+				} catch (Exception e) {
+					System.err.println("Unable to write to path + outputFile.");
+				}
+			}
+
+			if (parser.hasFlag("-exact")) {
+				try {
+					Path file = Paths.get(parser.getValue("-exact"));
+					qHelp.parseQuery(file, true);
+				} catch (IOException e) {
+					System.err.println("Unable to use path.");
+				} catch (NullPointerException e) {
+					System.err.println("Some data was unretrievable.");
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			}
+
+			if (parser.hasFlag("-query")) {
+				try {
+					Path file = Paths.get(parser.getValue("-query"));
+					qHelp.parseQuery(file, false);
+				} catch (IOException e) {
+					System.err.println("Unable to use path.");
+				} catch (NullPointerException e) {
+					System.err.println("Some data was unretrievable.");
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			}
+
+			if (parser.hasFlag("-results")) {
+				try {
+					Path outFile = Paths.get(parser.getValue("-results", "results.json"));
+					qHelp.toJSON(outFile);
+				} catch (IOException e) {
+					System.err.println("Unable to use path.");
+				} catch (NullPointerException e) {
+					System.err.println("Some data was unretrievable.");
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
 		}
-		
-		/*
-		 * TODO Project 4, to get started:
-		 * 
-		 * if (parser.hasFlag("-multi")) {
-		 * 		new stuff
-		 * 
-		 * }
-		 * else {
-		 * 		old stuff
-		 * }
-		 */
 	}
 }
