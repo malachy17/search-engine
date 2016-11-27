@@ -39,10 +39,11 @@ public class MultiInvertedIndexBuilder {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(path)) {
 			for (Path file : listing) {
 				if (Files.isDirectory(file)) {
-					minions.execute(new DirectoryMinion(file));
+					traverse(file);
 				} else {
 					if (file.getFileName().toString().toLowerCase().endsWith(".txt")) {
-						parseFile(file);
+						// parseFile(file);
+						minions.execute(new Minion(file));
 					}
 				}
 			}
@@ -85,15 +86,15 @@ public class MultiInvertedIndexBuilder {
 
 	/**
 	 * Handles per-directory parsing. If a subdirectory is encountered, a new
-	 * {@link DirectoryMinion} is created to handle that subdirectory.
+	 * {@link Minion} is created to handle that subdirectory.
 	 */
-	private class DirectoryMinion implements Runnable {
+	private class Minion implements Runnable {
 
-		private Path directory;
+		private Path file;
 
-		public DirectoryMinion(Path directory) {
-			logger.debug("Minion created for {}", directory);
-			this.directory = directory;
+		public Minion(Path file) {
+			logger.debug("Minion created for {}", file);
+			this.file = file;
 
 			// Indicate we now have "pending" work to do. This is necessary
 			// so we know when our threads are "done", since we can no longer
@@ -103,27 +104,16 @@ public class MultiInvertedIndexBuilder {
 
 		@Override
 		public void run() {
-			try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-				for (Path path : stream) {
-					if (Files.isDirectory(path)) {
-						// Note that we now create a new runnable object and add
-						// it to the work queue.
-						minions.execute(new DirectoryMinion(path));
-					} else {
-						if (path.getFileName().toString().toLowerCase().endsWith(".txt")) {
-							parseFile(path);
-						}
-					}
-				}
-
+			try {
+				parseFile(file);
 				// Indicate that we no longer have "pending" work to do.
 				decrementPending();
 			} catch (IOException e) {
-				logger.warn("Unable to parse {}", directory);
+				logger.warn("Unable to parse {}", file);
 				logger.catching(Level.DEBUG, e);
 			}
 
-			logger.debug("Minion finished {}", directory);
+			logger.debug("Minion finished {}", file);
 		}
 	}
 

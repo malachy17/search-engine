@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class MultiInvertedIndex extends InvertedIndex {
 
 	private static final Logger logger = LogManager.getLogger();
+	// private ReadWriteLock lock = new ReadWriteLock();
 
 	/**
 	 * The constructor. Instantiates a new index.
@@ -37,8 +38,8 @@ public class MultiInvertedIndex extends InvertedIndex {
 	 *            the position in the file where the word is found
 	 */
 	@Override
-	public void add(String word, String file, Integer position) {
-		logger.debug("add(): Adding word \"{}\", file \"{}\", and position \"{}\".", word, file, position);
+	public synchronized void add(String word, String file, Integer position) {
+		logger.trace("add(): Adding word \"{}\", file \"{}\", and position \"{}\".", word, file, position);
 		super.add(word, file, position);
 	}
 
