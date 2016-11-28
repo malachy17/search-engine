@@ -85,6 +85,7 @@ public class Driver {
 				try {
 					Path file = Paths.get(parser.getValue("-exact"));
 					qHelp.parseQuery(file, true);
+					qHelp.shutdown();//
 				} catch (IOException e) {
 					System.err.println("Unable to use path.");
 				} catch (NullPointerException e) {
@@ -98,6 +99,7 @@ public class Driver {
 				try {
 					Path file = Paths.get(parser.getValue("-query"));
 					qHelp.parseQuery(file, false);
+					qHelp.shutdown();//
 				} catch (IOException e) {
 					System.err.println("Unable to use path.");
 				} catch (NullPointerException e) {
