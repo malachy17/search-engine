@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class MultiInvertedIndex extends InvertedIndex {
 
 	private static final Logger logger = LogManager.getLogger();
-	// private ReadWriteLock lock = new ReadWriteLock();
+	private ReadWriteLock lock = new ReadWriteLock();
 
 	/**
 	 * The constructor. Instantiates a new index.
@@ -38,9 +38,11 @@ public class MultiInvertedIndex extends InvertedIndex {
 	 *            the position in the file where the word is found
 	 */
 	@Override
-	public synchronized void add(String word, String file, Integer position) {
+	public void add(String word, String file, Integer position) {
 		logger.trace("add(): Adding word \"{}\", file \"{}\", and position \"{}\".", word, file, position);
+		lock.lockReadWrite();
 		super.add(word, file, position);
+		lock.unlockReadWrite();
 	}
 
 	/**
@@ -52,9 +54,11 @@ public class MultiInvertedIndex extends InvertedIndex {
 	 * @throws IOExceptions
 	 */
 	@Override
-	public synchronized void toJSON(Path output) throws IOException {
+	public void toJSON(Path output) throws IOException {
 		logger.debug("toJSON(): Sending {} to be written by the JSONWriter class.", output);
+		lock.lockReadOnly();
 		super.toJSON(output);
+		lock.unlockReadOnly();
 	}
 
 	/**
@@ -67,9 +71,14 @@ public class MultiInvertedIndex extends InvertedIndex {
 	 * @return a list of SearchResult objects.
 	 */
 	@Override
-	public synchronized ArrayList<SearchResult> exactSearch(String[] query) {
+	public ArrayList<SearchResult> exactSearch(String[] query) {
 		logger.debug("exactSearch(): Searching for {}.", Arrays.toString(query));
-		return super.exactSearch(query);
+		lock.lockReadOnly();
+		try {
+			return super.exactSearch(query);
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -83,8 +92,13 @@ public class MultiInvertedIndex extends InvertedIndex {
 	 * @return a list of SearchResult objects.
 	 */
 	@Override
-	public synchronized ArrayList<SearchResult> partialSearch(String[] query) {
+	public ArrayList<SearchResult> partialSearch(String[] query) {
 		logger.debug("partialSearch(): Searching for {}.", Arrays.toString(query));
-		return super.partialSearch(query);
+		lock.lockReadOnly();
+		try {
+			return super.partialSearch(query);
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 }
