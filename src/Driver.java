@@ -53,6 +53,7 @@ public class Driver {
 					Path path = Paths.get(parser.getValue("-dir"));
 					MultiInvertedIndexBuilder builder = new MultiInvertedIndexBuilder(index, threads);
 					builder.traverse(path);
+					builder.shutdown();
 				} catch (IOException e) {
 					System.err.println("Unable to traverse path.");
 				} catch (NullPointerException e) {
@@ -65,6 +66,7 @@ public class Driver {
 					String url = parser.getValue("-url");
 					MultiWebCrawler crawler = new MultiWebCrawler(index, threads);
 					crawler.addSeed(url);
+					crawler.shutdown();
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
 				}

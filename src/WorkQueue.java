@@ -42,6 +42,7 @@ public class WorkQueue {
 	 *            number of worker threads; should be greater than 1
 	 */
 	public WorkQueue(int threads) {
+		threads = threads < 1 ? DEFAULT : threads;
 		this.queue = new LinkedList<Runnable>();
 		this.workers = new PoolWorker[threads];
 

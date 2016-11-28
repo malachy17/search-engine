@@ -63,7 +63,7 @@ public class MultiInvertedIndexBuilder {
 	 *            the InvertedIndex data structure that will add in each word.
 	 * @throws IOException
 	 */
-	public synchronized void parseFile(Path input) throws IOException {
+	public void parseFile(Path input) throws IOException {
 		try (BufferedReader reader = Files.newBufferedReader(input, Charset.forName("UTF-8"));) {
 			String line = null;
 			int position = 1;
