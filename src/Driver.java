@@ -38,13 +38,14 @@ public class Driver {
 		ArgumentParser parser = new ArgumentParser(args);
 		InvertedIndex index;
 		QueryHelper qHelp;
+		MultiQueryHelper mqHelp;
 
 		int threads = 5;
 
 		if (parser.hasFlag("-multi")) {
 
 			index = new MultiInvertedIndex();
-			qHelp = new QueryHelper(index);
+			mqHelp = new MultiQueryHelper(index);
 
 			threads = parser.getValue("-multi", threads);
 
@@ -84,8 +85,8 @@ public class Driver {
 			if (parser.hasFlag("-exact")) {
 				try {
 					Path file = Paths.get(parser.getValue("-exact"));
-					qHelp.parseQuery(file, true);
-					qHelp.shutdown();//
+					mqHelp.parseQuery(file, true);
+					mqHelp.shutdown();//
 				} catch (IOException e) {
 					System.err.println("Unable to use path.");
 				} catch (NullPointerException e) {
@@ -98,8 +99,8 @@ public class Driver {
 			if (parser.hasFlag("-query")) {
 				try {
 					Path file = Paths.get(parser.getValue("-query"));
-					qHelp.parseQuery(file, false);
-					qHelp.shutdown();//
+					mqHelp.parseQuery(file, false);
+					mqHelp.shutdown();//
 				} catch (IOException e) {
 					System.err.println("Unable to use path.");
 				} catch (NullPointerException e) {
@@ -112,7 +113,7 @@ public class Driver {
 			if (parser.hasFlag("-results")) {
 				try {
 					Path outFile = Paths.get(parser.getValue("-results", "results.json"));
-					qHelp.toJSON(outFile);
+					mqHelp.toJSON(outFile);
 				} catch (IOException e) {
 					System.err.println("Unable to use path.");
 				} catch (NullPointerException e) {
