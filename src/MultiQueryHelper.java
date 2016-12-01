@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 public class MultiQueryHelper {
 
 	private static final Logger logger = LogManager.getLogger();
-	private ReadWriteLock lock;
+	private ReadWriteLock lock; // TODO final
 
 	private final WorkQueue minions;
 	private int pending;
@@ -57,6 +57,8 @@ public class MultiQueryHelper {
 
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 			while ((line = reader.readLine()) != null) {
+				// TODO All of the line splitting should happen in the minion
+				
 				line = InvertedIndexBuilder.clean(line);
 
 				String[] words = line.split("\\s+");
@@ -78,6 +80,7 @@ public class MultiQueryHelper {
 	 * @throws IOException
 	 */
 	public void toJSON(Path output) throws IOException {
+		// TODO Unprotected/unlocked access of map
 		JSONWriter.writeSearchResults(output, map);
 	}
 
@@ -110,6 +113,14 @@ public class MultiQueryHelper {
 					lock.lockReadWrite();
 					map.put(line, index.exactSearch(words));//
 					lock.unlockReadWrite();
+					
+					/* TODO efficiency issue:
+					List<SearchResult> current = index.exactSearch(words);
+					lock.lockReadWrite();
+					map.put(line, current);//
+					lock.unlockReadWrite();
+					*/
+					
 				} else {
 					lock.lockReadWrite();
 					map.put(line, index.partialSearch(words));//

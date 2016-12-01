@@ -1,5 +1,7 @@
 import java.util.LinkedList;
 
+// TODO Move pending into here like the PrimeFinder homework
+
 /**
  * A simple work queue implementation based on the IBM developerWorks article by
  * Brian Goetz. It is up to the user of this class to keep track of whether

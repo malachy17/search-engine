@@ -138,4 +138,20 @@ public class InvertedIndex {
 			}
 		}
 	}
+	
+	/* TODO
+	public void addAll(InvertedIndex other) {
+		for (String word : other.index.keySet()) {
+			if (this.index.containsKey(word) == false) {
+				this.index.put(word, other.index.get(word));
+			}
+			else {
+				two more cases here
+				use put where you can
+				otherwise call addAll
+			}
+		}
+	}
+	*/
+	
 }

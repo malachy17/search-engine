@@ -53,6 +53,8 @@ public class MultiInvertedIndexBuilder {
 		}
 	}
 
+	// TODO Remember, copy/paste is bad :(
+	// TODO InvertedIndexBuilder.parseFile(Path, InvertedIndex)
 	/**
 	 * Parses a given text file and the words in each line. Each legal word is
 	 * added to the given index.
@@ -106,6 +108,14 @@ public class MultiInvertedIndexBuilder {
 		public void run() {
 			try {
 				parseFile(file);
+				
+				// TODO Avoid constant blocking operations
+				/*
+				InvertedIndex local = new InvertedIndex();
+				InvertedIndexBuilder.parseFile(file, local);
+				index.addAll(local);
+				*/
+				
 				// Indicate that we no longer have "pending" work to do.
 				decrementPending();
 			} catch (IOException e) {

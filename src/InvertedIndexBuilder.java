@@ -37,6 +37,7 @@ public class InvertedIndexBuilder {
 		}
 	}
 
+	// TODO Make public
 	/**
 	 * Parses a given text file and the words in each line. Each legal word is
 	 * added to the given index.
@@ -47,7 +48,7 @@ public class InvertedIndexBuilder {
 	 *            the InvertedIndex data structure that will add in each word.
 	 * @throws IOException
 	 */
-	private static void parseFile(Path input, InvertedIndex index) throws IOException { // TODO Make public
+	private static void parseFile(Path input, InvertedIndex index) throws IOException { 
 
 		try (BufferedReader reader = Files.newBufferedReader(input, Charset.forName("UTF-8"));) {
 			String line = null;

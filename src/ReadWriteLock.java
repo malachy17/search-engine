@@ -45,8 +45,12 @@ public class ReadWriteLock {
 	 * threads if necessary.
 	 */
 	public synchronized void unlockReadOnly() {
+		// TODO assert readers > 0 && writers == 0
 		try {
 			readers--;
+			
+			// TODO Will never wake up a reader! Only wakes up a writer.
+			// TODO Only call this when readers == 0
 			notifyAll();
 		} catch (Exception e) {
 			logger.log(Level.DEBUG, "Exception in unlockReadOnly.");
