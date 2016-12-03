@@ -178,7 +178,7 @@ public class MultiQueryHelper {
 			logger.debug("Finish interrupted", e);
 		}
 	}
-
+ 
 	/**
 	 * Will shutdown the work queue after all the current pending work is
 	 * finished. Necessary to prevent our code from running forever in the
