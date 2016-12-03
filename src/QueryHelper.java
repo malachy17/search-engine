@@ -47,7 +47,6 @@ public class QueryHelper {
 				String[] words = line.split("\\s+");
 				Arrays.sort(words);
 				line = String.join(" ", words);
-				words = line.split(" "); // TODO split happening twice.
 
 				if (exact == true) {
 					map.put(line, index.exactSearch(words));

@@ -57,16 +57,7 @@ public class MultiQueryHelper {
 
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 			while ((line = reader.readLine()) != null) {
-				// TODO All of the line splitting should happen in the minion
-
-				line = InvertedIndexBuilder.clean(line);
-
-				String[] words = line.split("\\s+");
-				Arrays.sort(words);
-				line = String.join(" ", words);
-				words = line.split(" "); // TODO split happening twice.
-
-				minions.execute(new Minion(line, words, exact));
+				minions.execute(new Minion(line, exact));
 			}
 		}
 	}
@@ -95,21 +86,24 @@ public class MultiQueryHelper {
 		private String line;
 		private String[] words;
 
-		public Minion(String line, String[] words, boolean exact) {
+		public Minion(String line, boolean exact) {
 			logger.debug("Minion created for {}", line);
 			this.line = line;
-			this.words = words;
 			this.exact = exact;
 
-			// Indicate we now have "pending" work to do. This is necessary
-			// so we know when our threads are "done", since we can no longer
-			// call the join() method on them.
 			incrementPending();
 		}
 
 		@Override
 		public void run() {
 			try {
+				// Put these in minion instead of parseQuery, because we want
+				// each minion to do the work.
+				line = InvertedIndexBuilder.clean(line);
+				words = line.split("\\s+");
+				Arrays.sort(words);
+				line = String.join(" ", words);
+
 				if (exact == true) {
 					// Efficiency issue fixed where search was inside put()
 					// inside lock.
@@ -124,7 +118,7 @@ public class MultiQueryHelper {
 					map.put(line, current);
 					lock.unlockReadWrite();
 				}
-				// Indicate that we no longer have "pending" work to do.
+
 				decrementPending();
 			} catch (Exception e) {
 				logger.warn("Unable to parse {}", line);
