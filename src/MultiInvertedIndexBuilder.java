@@ -1,6 +1,4 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,39 +51,6 @@ public class MultiInvertedIndexBuilder {
 		}
 	}
 
-	// TODO Remember, copy/paste is bad :(
-	// TODO InvertedIndexBuilder.parseFile(Path, InvertedIndex)
-	/**
-	 * Parses a given text file and the words in each line. Each legal word is
-	 * added to the given index.
-	 * 
-	 * @param input
-	 *            the file being parsed
-	 * @param index
-	 *            the InvertedIndex data structure that will add in each word.
-	 * @throws IOException
-	 */
-	public void parseFile(Path input) throws IOException {
-		try (BufferedReader reader = Files.newBufferedReader(input, Charset.forName("UTF-8"));) {
-			String line = null;
-			int position = 1;
-
-			String location = input.normalize().toString();
-
-			while ((line = reader.readLine()) != null) {
-				line = InvertedIndexBuilder.clean(line);
-				String[] words = line.split("\\s+");
-
-				for (String word : words) {
-					if (!word.isEmpty()) {
-						index.add(word.trim(), location, position);
-						position++;
-					}
-				}
-			}
-		}
-	}
-
 	/**
 	 * Handles per-directory parsing. If a subdirectory is encountered, a new
 	 * {@link Minion} is created to handle that subdirectory.
@@ -107,15 +72,15 @@ public class MultiInvertedIndexBuilder {
 		@Override
 		public void run() {
 			try {
-				parseFile(file);
-				
+				InvertedIndexBuilder.parseFile(file, index);
+
 				// TODO Avoid constant blocking operations
 				/*
-				InvertedIndex local = new InvertedIndex();
-				InvertedIndexBuilder.parseFile(file, local);
-				index.addAll(local);
-				*/
-				
+				 * InvertedIndex local = new InvertedIndex();
+				 * InvertedIndexBuilder.parseFile(file, local);
+				 * index.addAll(local);
+				 */
+
 				// Indicate that we no longer have "pending" work to do.
 				decrementPending();
 			} catch (IOException e) {

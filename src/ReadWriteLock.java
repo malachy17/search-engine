@@ -48,10 +48,12 @@ public class ReadWriteLock {
 		// TODO assert readers > 0 && writers == 0
 		try {
 			readers--;
-			
-			// TODO Will never wake up a reader! Only wakes up a writer.
-			// TODO Only call this when readers == 0
-			notifyAll();
+
+			// Will never wake up a reader! Only wakes up a writer.
+			// Only call this when readers == 0
+			if (readers <= 0) {
+				notifyAll();
+			}
 		} catch (Exception e) {
 			logger.log(Level.DEBUG, "Exception in unlockReadOnly.");
 		}
