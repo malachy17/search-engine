@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 public class MultiQueryHelper {
 
 	private static final Logger logger = LogManager.getLogger();
-	private ReadWriteLock lock; // TODO final
+	private final ReadWriteLock lock;
 
 	private final WorkQueue minions;
 	private int pending;
@@ -58,7 +58,7 @@ public class MultiQueryHelper {
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 			while ((line = reader.readLine()) != null) {
 				// TODO All of the line splitting should happen in the minion
-				
+
 				line = InvertedIndexBuilder.clean(line);
 
 				String[] words = line.split("\\s+");
@@ -80,8 +80,9 @@ public class MultiQueryHelper {
 	 * @throws IOException
 	 */
 	public void toJSON(Path output) throws IOException {
-		// TODO Unprotected/unlocked access of map
+		lock.lockReadWrite();
 		JSONWriter.writeSearchResults(output, map);
+		lock.unlockReadWrite();
 	}
 
 	/**
@@ -110,20 +111,17 @@ public class MultiQueryHelper {
 		public void run() {
 			try {
 				if (exact == true) {
+					// Efficiency issue fixed where search was inside put()
+					// inside lock.
+					ArrayList<SearchResult> current = index.exactSearch(words);
 					lock.lockReadWrite();
-					map.put(line, index.exactSearch(words));//
+					map.put(line, current);
 					lock.unlockReadWrite();
-					
-					/* TODO efficiency issue:
-					List<SearchResult> current = index.exactSearch(words);
-					lock.lockReadWrite();
-					map.put(line, current);//
-					lock.unlockReadWrite();
-					*/
-					
+
 				} else {
+					ArrayList<SearchResult> current = index.partialSearch(words);
 					lock.lockReadWrite();
-					map.put(line, index.partialSearch(words));//
+					map.put(line, current);
 					lock.unlockReadWrite();
 				}
 				// Indicate that we no longer have "pending" work to do.
@@ -178,7 +176,7 @@ public class MultiQueryHelper {
 			logger.debug("Finish interrupted", e);
 		}
 	}
- 
+
 	/**
 	 * Will shutdown the work queue after all the current pending work is
 	 * finished. Necessary to prevent our code from running forever in the
