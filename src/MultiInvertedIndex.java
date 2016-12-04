@@ -18,13 +18,14 @@ public class MultiInvertedIndex extends InvertedIndex {
 
 	// TODO Use final where appropriate and initialize instance members in the
 	// constructor
-	private ReadWriteLock lock = new ReadWriteLock();
+	private final ReadWriteLock lock;
 
 	/**
 	 * The constructor. Instantiates a new index.
 	 */
 	public MultiInvertedIndex() {
 		super();
+		lock = new ReadWriteLock();
 	}
 
 	/**
@@ -44,10 +45,11 @@ public class MultiInvertedIndex extends InvertedIndex {
 	public void add(String word, String file, Integer position) {
 		logger.trace("add(): Adding word \"{}\", file \"{}\", and position \"{}\".", word, file, position);
 		lock.lockReadWrite();
-		super.add(word, file, position);
-
-		// TODO try/finally just in case there is a runtime exception
-		lock.unlockReadWrite();
+		try {
+			super.add(word, file, position);
+		} finally {
+			lock.unlockReadWrite();
+		}
 	}
 
 	/**
@@ -62,11 +64,13 @@ public class MultiInvertedIndex extends InvertedIndex {
 	public void toJSON(Path output) throws IOException {
 		logger.debug("toJSON(): Sending {} to be written by the JSONWriter class.", output);
 		lock.lockReadOnly();
-		super.toJSON(output);
-
-		// TODO This will never happen if super.toJSON throws an exception
-		// TODO Still use try/finally
-		lock.unlockReadOnly();
+		// Use try/finally just incase exception is thrown, lock is still
+		// unlocked.
+		try {
+			super.toJSON(output);
+		} finally {
+			lock.unlockReadOnly();
+		}
 	}
 
 	/**
@@ -113,7 +117,10 @@ public class MultiInvertedIndex extends InvertedIndex {
 	@Override
 	public void addAll(InvertedIndex other) {
 		lock.lockReadWrite();
-		super.addAll(other);
-		lock.unlockReadWrite();
+		try {
+			super.addAll(other);
+		} finally {
+			lock.unlockReadWrite();
+		}
 	}
 }

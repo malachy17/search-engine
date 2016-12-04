@@ -40,7 +40,6 @@ public class MultiInvertedIndexBuilder {
 					traverse(file);
 				} else {
 					if (file.getFileName().toString().toLowerCase().endsWith(".txt")) {
-						// parseFile(file);
 						minions.execute(new Minion(file));
 					}
 				}
