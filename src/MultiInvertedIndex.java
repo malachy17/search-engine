@@ -15,8 +15,9 @@ import org.apache.logging.log4j.Logger;
 public class MultiInvertedIndex extends InvertedIndex {
 
 	private static final Logger logger = LogManager.getLogger();
-	
-	// TODO Use final where appropriate and initialize instance members in the constructor
+
+	// TODO Use final where appropriate and initialize instance members in the
+	// constructor
 	private ReadWriteLock lock = new ReadWriteLock();
 
 	/**
@@ -44,7 +45,7 @@ public class MultiInvertedIndex extends InvertedIndex {
 		logger.trace("add(): Adding word \"{}\", file \"{}\", and position \"{}\".", word, file, position);
 		lock.lockReadWrite();
 		super.add(word, file, position);
-		
+
 		// TODO try/finally just in case there is a runtime exception
 		lock.unlockReadWrite();
 	}
@@ -62,7 +63,7 @@ public class MultiInvertedIndex extends InvertedIndex {
 		logger.debug("toJSON(): Sending {} to be written by the JSONWriter class.", output);
 		lock.lockReadOnly();
 		super.toJSON(output);
-		
+
 		// TODO This will never happen if super.toJSON throws an exception
 		// TODO Still use try/finally
 		lock.unlockReadOnly();
@@ -107,5 +108,12 @@ public class MultiInvertedIndex extends InvertedIndex {
 		} finally {
 			lock.unlockReadOnly();
 		}
+	}
+
+	@Override
+	public void addAll(InvertedIndex other) {
+		lock.lockReadWrite();
+		super.addAll(other);
+		lock.unlockReadWrite();
 	}
 }

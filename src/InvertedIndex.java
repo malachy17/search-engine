@@ -139,11 +139,73 @@ public class InvertedIndex {
 		}
 	}
 
-	/*
-	 * TODO public void addAll(InvertedIndex other) { for (String word :
-	 * other.index.keySet()) { if (this.index.containsKey(word) == false) {
-	 * this.index.put(word, other.index.get(word)); } else { two more cases here
-	 * use put where you can otherwise call addAll } } }
-	 */
+	// public void addAll(InvertedIndex other) {
+	// + for (String word : other.index.keySet()) {
+	// + if (this.index.containsKey(word) == false) {
+	// + this.index.put(word, other.index.get(word));
+	// + }
+	// + else {
+	// + two more cases here
+	// + use put where you can
+	// + otherwise call addAll
+	// + }
+	// + }
+	// + }
 
+	// if (!index.containsKey(word)) {
+	// index.put(word, new TreeMap<>());
+	// }
+	//
+	// if (index.get(word).get(file) == null) {
+	// index.get(word).put(file, new TreeSet<>());
+	// }
+	//
+	// index.get(word).get(file).add(position);
+
+	/**
+	 * Adds the contents of another index to this one.
+	 * 
+	 * @param other
+	 *            the other index.
+	 */
+	public void addAll(InvertedIndex other) {
+
+//		for (String word : other.index.keySet()) {
+//			if (!this.index.containsKey(word)) {
+//				this.index.put(word, new TreeMap<>());
+//			}
+//
+//			for (String file : other.index.get(word).keySet()) {
+//				if (this.index.get(word).get(file) == null) {
+//					index.get(word).put(file, new TreeSet<>());
+//				}
+//
+//				for (Integer position : other.index.get(word).get(file)) {
+//					this.index.get(word).get(file).add(position);
+//				}
+//			}
+//		}
+
+		for (String word : other.index.keySet()) {
+			if (!this.index.containsKey(word)) {
+				this.index.put(word, other.index.get(word));
+			}
+
+			else {
+				for (String file : other.index.get(word).keySet()) {
+					if (!this.index.get(word).containsKey(file)) {
+						this.index.get(word).put(file, index.get(word).get(file));
+					}
+
+					else {
+						for (Integer position : other.index.get(word).get(file)) {
+							if (!this.index.get(word).get(file).contains(position)) {
+								this.index.get(word).get(file).add(position);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

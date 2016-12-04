@@ -63,9 +63,6 @@ public class MultiInvertedIndexBuilder {
 			logger.debug("Minion created for {}", file);
 			this.file = file;
 
-			// Indicate we now have "pending" work to do. This is necessary
-			// so we know when our threads are "done", since we can no longer
-			// call the join() method on them.
 			incrementPending();
 		}
 
@@ -74,14 +71,10 @@ public class MultiInvertedIndexBuilder {
 			try {
 				InvertedIndexBuilder.parseFile(file, index);
 
-				// TODO Avoid constant blocking operations
-				/*
-				 * InvertedIndex local = new InvertedIndex();
-				 * InvertedIndexBuilder.parseFile(file, local);
-				 * index.addAll(local);
-				 */
+				// InvertedIndex local = new InvertedIndex();
+				// InvertedIndexBuilder.parseFile(file, local);
+				// index.addAll(local);
 
-				// Indicate that we no longer have "pending" work to do.
 				decrementPending();
 			} catch (IOException e) {
 				logger.warn("Unable to parse {}", file);
