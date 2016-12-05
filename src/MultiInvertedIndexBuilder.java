@@ -68,11 +68,11 @@ public class MultiInvertedIndexBuilder {
 		@Override
 		public void run() {
 			try {
-				InvertedIndexBuilder.parseFile(file, index);
+				// InvertedIndexBuilder.parseFile(file, index);
 
-				// InvertedIndex local = new InvertedIndex();
-				// InvertedIndexBuilder.parseFile(file, local);
-				// index.addAll(local);
+				InvertedIndex local = new InvertedIndex();
+				InvertedIndexBuilder.parseFile(file, local);
+				index.addAll(local);
 
 				decrementPending();
 			} catch (IOException e) {
