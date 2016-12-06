@@ -202,4 +202,35 @@ public class Driver {
 			}
 		}
 	}
+	
+	/* TODO
+	 * 
+	 * InvertedIndex index = null;
+	 * QueryResultsInterface query = null;
+	 * WorkQueue queue = null; // pass around the work queue to your multithreaded code instead of the number of threads
+	 * 
+	 * if (-multi) {
+	 * 		MultiInvertedIndex multi = new MultiInvertedIndex();
+	 * 		index = multi;
+	 * 
+	 * 		queue = new WorkQueue(threads)
+	 * 
+	 * 		query = new MultiQueryHelper(multi, queue);
+	 * }
+	 * else {
+	 * 		index = new InvertedIndex();
+	 * 		query = new QueryHelper(index);
+	 * }
+	 * 
+	 * 
+	 * if (-query) {
+	 * 		query.parseQuery(path, false); // for the multithreaded version, it should call finish()
+	 * }
+	 * 
+	 * 
+	 * if (queue != null) {
+	 * 		queue.shutdown();
+	 * }
+	 * 
+	 */
 }

@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// TODO Create an interface here too
+
 /**
  * Crawls links starting from a seed URL in a breadth-first search fashion and
  * sends all words found to an InvertedIndex to be added in.
@@ -18,8 +20,8 @@ public class MultiWebCrawler {
 
 	private static final Logger logger = LogManager.getLogger();
 
-	private final InvertedIndex index;
-	private final LinkedList<String> queue;
+	private final InvertedIndex index; // TODO thread-safe version
+	private final LinkedList<String> queue; // TODO remove
 	private final Set<String> urls;
 
 	private final WorkQueue minions;
@@ -74,6 +76,12 @@ public class MultiWebCrawler {
 				}
 			}
 		}
+		
+		/* TODO 
+		urls.add(seed);
+		minions.execute(new Minion(seed));
+		minions.finish();
+		*/
 	}
 
 	/**
@@ -115,6 +123,10 @@ public class MultiWebCrawler {
 		@Override
 		public void run() {
 			try {
+				// TODO fetch of html
+				// TODO parsing of links
+				// TODO adding to index (local index here too)
+				
 				sendToIndex(html, link);
 			} catch (Exception e) {
 				logger.catching(Level.DEBUG, e);

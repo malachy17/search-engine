@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// TODO Create a QueryHelperInterface and implement it in both your multi- and single-threaded query helpers
+
 /**
  * A class that contains both a map of queries to SearchResult objects and an
  * index that is used as the database to search the queries in. It also contains
@@ -29,7 +31,7 @@ public class MultiQueryHelper {
 	private final TreeMap<String, ArrayList<SearchResult>> map;
 
 	// The inverted index of all words found in all files.
-	private final InvertedIndex index;
+	private final InvertedIndex index; // TODO MultiInvertedIndex
 
 	public MultiQueryHelper(InvertedIndex index) {
 		this.lock = new ReadWriteLock();
@@ -69,7 +71,7 @@ public class MultiQueryHelper {
 	 * @throws IOException
 	 */
 	public void toJSON(Path output) throws IOException {
-		lock.lockReadWrite();
+		lock.lockReadWrite(); // TODO read only
 		JSONWriter.writeSearchResults(output, map);
 		lock.unlockReadWrite();
 	}
@@ -99,7 +101,15 @@ public class MultiQueryHelper {
 				words = line.split("\\s+");
 				Arrays.sort(words);
 				line = String.join(" ", words);
-
+				
+				/* TODO Reduce repeated code
+				ArrayList<SearchResult> current = (exact) ? index.exactSearch(words) : index.partialSearch(words);
+				lock.lockReadWrite();
+				map.put(line, current);
+				lock.unlockReadWrite();
+				*/
+				
+				
 				if (exact == true) {
 					// Efficiency issue fixed where search was inside put()
 					// inside lock.
@@ -128,7 +138,7 @@ public class MultiQueryHelper {
 	 * finished. Necessary to prevent our code from running forever in the
 	 * background.
 	 */
-	public synchronized void shutdown() {
+	public synchronized void shutdown() { // TODO remove synchronized
 		logger.debug("Shutting down");
 		minions.finish();
 		minions.shutdown();
