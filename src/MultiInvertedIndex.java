@@ -15,9 +15,6 @@ import org.apache.logging.log4j.Logger;
 public class MultiInvertedIndex extends InvertedIndex {
 
 	private static final Logger logger = LogManager.getLogger();
-
-	// TODO Use final where appropriate and initialize instance members in the
-	// constructor
 	private final ReadWriteLock lock;
 
 	/**

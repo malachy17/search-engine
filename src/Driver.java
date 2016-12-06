@@ -48,6 +48,7 @@ public class Driver {
 			mqHelp = new MultiQueryHelper(index);
 
 			threads = parser.getValue("-multi", threads);
+			threads = threads < 1 ? 1 : threads;
 
 			if (parser.hasFlag("-dir")) {
 				try {

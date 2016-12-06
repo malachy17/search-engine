@@ -24,7 +24,6 @@ public class MultiQueryHelper {
 	private final ReadWriteLock lock;
 
 	private final WorkQueue minions;
-	private int pending;
 
 	// A map to store query searches to a list of SearchResult objects.
 	private final TreeMap<String, ArrayList<SearchResult>> map;
@@ -35,7 +34,6 @@ public class MultiQueryHelper {
 	public MultiQueryHelper(InvertedIndex index) {
 		this.lock = new ReadWriteLock();
 		this.minions = new WorkQueue();
-		this.pending = 0;
 
 		this.index = index;
 		map = new TreeMap<>();
@@ -90,8 +88,6 @@ public class MultiQueryHelper {
 			logger.debug("Minion created for {}", line);
 			this.line = line;
 			this.exact = exact;
-
-			incrementPending();
 		}
 
 		@Override
@@ -118,8 +114,6 @@ public class MultiQueryHelper {
 					map.put(line, current);
 					lock.unlockReadWrite();
 				}
-
-				decrementPending();
 			} catch (Exception e) {
 				logger.warn("Unable to parse {}", line);
 				logger.catching(Level.DEBUG, e);
@@ -130,55 +124,13 @@ public class MultiQueryHelper {
 	}
 
 	/**
-	 * Indicates that we now have additional "pending" work to wait for. We need
-	 * this since we can no longer call join() on the threads. (The threads keep
-	 * running forever in the background.)
-	 *
-	 * We made this a synchronized method in the outer class, since locking on
-	 * the "this" object within an inner class does not work.
-	 */
-	private synchronized void incrementPending() {
-		pending++;
-		logger.debug("Pending is now {}", pending);
-	}
-
-	/**
-	 * Indicates that we now have one less "pending" work, and will notify any
-	 * waiting threads if we no longer have any more pending work left.
-	 */
-	private synchronized void decrementPending() {
-		pending--;
-		logger.debug("Pending is now {}", pending);
-
-		if (pending <= 0) {
-			this.notifyAll();
-		}
-	}
-
-	/**
-	 * Helper method, that helps a thread wait until all of the current work is
-	 * done. This is useful for resetting the counters or shutting down the work
-	 * queue.
-	 */
-	public synchronized void finish() {
-		try {
-			while (pending > 0) {
-				logger.debug("Waiting until finished");
-				this.wait();
-			}
-		} catch (InterruptedException e) {
-			logger.debug("Finish interrupted", e);
-		}
-	}
-
-	/**
 	 * Will shutdown the work queue after all the current pending work is
 	 * finished. Necessary to prevent our code from running forever in the
 	 * background.
 	 */
 	public synchronized void shutdown() {
 		logger.debug("Shutting down");
-		finish();
+		minions.finish();
 		minions.shutdown();
 	}
 }

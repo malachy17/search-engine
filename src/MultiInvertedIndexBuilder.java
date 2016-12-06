@@ -14,12 +14,10 @@ public class MultiInvertedIndexBuilder {
 	private final InvertedIndex index;
 
 	private final WorkQueue minions;
-	private int pending;
 
 	public MultiInvertedIndexBuilder(InvertedIndex index, int threads) {
 		this.index = index;
 		this.minions = new WorkQueue(threads);
-		this.pending = 0;
 	}
 
 	/**
@@ -61,20 +59,15 @@ public class MultiInvertedIndexBuilder {
 		public Minion(Path file) {
 			logger.debug("Minion created for {}", file);
 			this.file = file;
-
-			incrementPending();
 		}
 
 		@Override
 		public void run() {
 			try {
 				// InvertedIndexBuilder.parseFile(file, index);
-
 				InvertedIndex local = new InvertedIndex();
 				InvertedIndexBuilder.parseFile(file, local);
 				index.addAll(local);
-
-				decrementPending();
 			} catch (IOException e) {
 				logger.warn("Unable to parse {}", file);
 				logger.catching(Level.DEBUG, e);
@@ -84,34 +77,9 @@ public class MultiInvertedIndexBuilder {
 		}
 	}
 
-	private synchronized void incrementPending() {
-		pending++;
-		logger.debug("incrementPending(): Pending is now {}", pending);
-	}
-
-	private synchronized void decrementPending() {
-		pending--;
-		logger.debug("decrementPending(): Pending is now {}", pending);
-
-		if (pending <= 0) {
-			this.notifyAll();
-		}
-	}
-
-	public synchronized void finish() {
-		try {
-			while (pending > 0) {
-				logger.debug("finish(): Waiting until finished.");
-				this.wait();
-			}
-		} catch (InterruptedException e) {
-			logger.debug("finish(): Finish interrupted", e);
-		}
-	}
-
 	public synchronized void shutdown() {
 		logger.debug("Shutting down");
-		finish();
+		minions.finish();
 		minions.shutdown();
 	}
 

@@ -1,6 +1,7 @@
 import java.util.LinkedList;
 
-// TODO Move pending into here like the PrimeFinder homework
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A simple work queue implementation based on the IBM developerWorks article by
@@ -28,6 +29,10 @@ public class WorkQueue {
 	/** The default number of threads to use when not specified. */
 	public static final int DEFAULT = 5;
 
+	private int pending;
+
+	private static final Logger logger = LogManager.getLogger();
+
 	/**
 	 * Starts a work queue with the default number of threads.
 	 * 
@@ -44,11 +49,11 @@ public class WorkQueue {
 	 *            number of worker threads; should be greater than 1
 	 */
 	public WorkQueue(int threads) {
-		threads = threads < 1 ? DEFAULT : threads;
 		this.queue = new LinkedList<Runnable>();
 		this.workers = new PoolWorker[threads];
 
-		shutdown = false;
+		this.shutdown = false;
+		this.pending = 0;
 
 		// start the threads so they are waiting in the background
 		for (int i = 0; i < threads; i++) {
@@ -65,9 +70,24 @@ public class WorkQueue {
 	 *            work request (in the form of a {@link Runnable} object)
 	 */
 	public void execute(Runnable r) {
+		incrementPending();
 		synchronized (queue) {
 			queue.addLast(r);
 			queue.notifyAll();
+		}
+	}
+
+	/**
+	 * Waits for all pending work to be finished.
+	 */
+	public synchronized void finish() {
+		try {
+			while (pending > 0) {
+				logger.debug("finish(): Waiting until finished.");
+				this.wait();
+			}
+		} catch (InterruptedException e) {
+			logger.debug("finish(): Finish interrupted", e);
 		}
 	}
 
@@ -111,7 +131,7 @@ public class WorkQueue {
 						try {
 							queue.wait();
 						} catch (InterruptedException ex) {
-							System.err.println("Warning: Work queue interrupted " + "while waiting.");
+							System.err.println("Warning: Work queue interrupted.");
 							Thread.currentThread().interrupt();
 						}
 					}
@@ -131,8 +151,34 @@ public class WorkQueue {
 				} catch (RuntimeException ex) {
 					// catch runtime exceptions to avoid leaking threads
 					System.err.println("Warning: Work queue encountered an " + "exception while running.");
+				} finally {
+					decrementPending();
 				}
 			}
+		}
+	}
+
+	/**
+	 * Indicates that we now have additional "pending" work to wait for. We need
+	 * this since we can no longer call join() on the threads. (The threads keep
+	 * running forever in the background.)
+	 *
+	 * We made this a synchronized method in the outer class, since locking on
+	 * the "this" object within an inner class does not work.
+	 */
+	private synchronized void incrementPending() {
+		pending++;
+	}
+
+	/**
+	 * Indicates that we now have one less "pending" work, and will notify any
+	 * waiting threads if we no longer have any more pending work left.
+	 */
+	private synchronized void decrementPending() {
+		pending--;
+
+		if (pending <= 0) {
+			this.notifyAll();
 		}
 	}
 }
