@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Outputs the data of a Map to a JSON file in proper JSON format.
  * 
@@ -21,6 +24,8 @@ public class JSONWriter {
 
 	/** End of line character used for pretty JSON output. */
 	private static final char END = '\n';
+
+	private static final Logger logger = LogManager.getLogger();
 
 	/**
 	 * Writes data from a Map to JSON format on a JSON file.
@@ -66,6 +71,7 @@ public class JSONWriter {
 			writer.write("}" + END);
 		} catch (Exception e) {
 			System.err.println("Error in writeNestedObject");
+			logger.debug("Error", e);
 		}
 	}
 

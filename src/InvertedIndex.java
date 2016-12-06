@@ -147,42 +147,38 @@ public class InvertedIndex {
 	 */
 	public void addAll(InvertedIndex other) {
 
-		for (String word : other.index.keySet()) {
-			if (!this.index.containsKey(word)) {
-				this.index.put(word, new TreeMap<>());
-			}
-
-			for (String file : other.index.get(word).keySet()) {
-				if (this.index.get(word).get(file) == null) {
-					index.get(word).put(file, new TreeSet<>());
-				}
-
-				for (Integer position : other.index.get(word).get(file)) {
-					this.index.get(word).get(file).add(position);
-				}
-			}
-		}
-
 //		for (String word : other.index.keySet()) {
 //			if (!this.index.containsKey(word)) {
-//				this.index.put(word, other.index.get(word));
+//				this.index.put(word, new TreeMap<>());
 //			}
 //
-//			else {
-//				for (String file : other.index.get(word).keySet()) {
-//					if (!this.index.get(word).containsKey(file)) {
-//						this.index.get(word).put(file, index.get(word).get(file));
-//					}
+//			for (String file : other.index.get(word).keySet()) {
+//				if (this.index.get(word).get(file) == null) {
+//					index.get(word).put(file, new TreeSet<>());
+//				}
 //
-//					else {
-//						for (Integer position : other.index.get(word).get(file)) {
-//							if (!this.index.get(word).get(file).contains(position)) {
-//								this.index.get(word).get(file).add(position);
-//							}
-//						}
-//					}
+//				for (Integer position : other.index.get(word).get(file)) {
+//					this.index.get(word).get(file).add(position);
 //				}
 //			}
 //		}
+
+		for (String word : other.index.keySet()) {
+			if (!this.index.containsKey(word)) {
+				this.index.put(word, other.index.get(word));
+			}
+
+			else {
+				for (String file : other.index.get(word).keySet()) {
+					if (!this.index.get(word).containsKey(file)) {
+						this.index.get(word).put(file, other.index.get(word).get(file));
+					}
+
+					else {
+						this.index.get(word).get(file).addAll(other.index.get(word).get(file));
+					}
+				}
+			}
+		}
 	}
 }
