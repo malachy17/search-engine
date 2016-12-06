@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+// TODO Project 4.1 Code Review
+
 /**
  * Goes through a given directory and documents all words in every text file
  * within that directory. Documents by storing each word, its file, and its
