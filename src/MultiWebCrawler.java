@@ -63,7 +63,7 @@ public class MultiWebCrawler implements WebCrawlerInterface {
 		while (!queue.isEmpty()) {
 			String current = queue.remove();
 			String html = HTTPFetcher.fetchHTML(current);
-			minions.execute(new Minion(html, current, index));
+			minions.execute(new Minion(html, current));
 			ArrayList<String> links = LinkParser.listLinks(html, current);
 
 			for (String link : links) {
@@ -90,13 +90,11 @@ public class MultiWebCrawler implements WebCrawlerInterface {
 
 		private String html;
 		private String link;
-		private InvertedIndex index;
 
-		public Minion(String html, String link, InvertedIndex index) {
+		public Minion(String html, String link) {
 			logger.debug("Minion created for {}", link);
 			this.html = html;
 			this.link = link;
-			this.index = index;
 		}
 
 		@Override
