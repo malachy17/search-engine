@@ -20,7 +20,7 @@ public class MultiWebCrawler {
 
 	private static final Logger logger = LogManager.getLogger();
 
-	private final InvertedIndex index; // TODO thread-safe version
+	private final MultiInvertedIndex index;
 	private final LinkedList<String> queue; // TODO remove
 	private final Set<String> urls;
 
@@ -35,7 +35,7 @@ public class MultiWebCrawler {
 	 *            The InvertedIndex object that words from sendToIndex() will be
 	 *            sent to.
 	 */
-	public MultiWebCrawler(InvertedIndex index, int threads) {
+	public MultiWebCrawler(MultiInvertedIndex index, int threads) {
 		this.index = index;
 		this.queue = new LinkedList<>();
 		this.urls = new HashSet<>();
@@ -65,7 +65,6 @@ public class MultiWebCrawler {
 		while (!queue.isEmpty()) {
 			String current = queue.remove();
 			String html = HTTPFetcher.fetchHTML(current);
-			// sendToIndex(html, current);
 			minions.execute(new Minion(html, current));
 			ArrayList<String> links = LinkParser.listLinks(html, current);
 
@@ -76,12 +75,11 @@ public class MultiWebCrawler {
 				}
 			}
 		}
-		
-		/* TODO 
-		urls.add(seed);
-		minions.execute(new Minion(seed));
-		minions.finish();
-		*/
+
+		/*
+		 * TODO urls.add(seed); minions.execute(new Minion(seed));
+		 * minions.finish();
+		 */
 	}
 
 	/**
@@ -126,7 +124,7 @@ public class MultiWebCrawler {
 				// TODO fetch of html
 				// TODO parsing of links
 				// TODO adding to index (local index here too)
-				
+
 				sendToIndex(html, link);
 			} catch (Exception e) {
 				logger.catching(Level.DEBUG, e);
@@ -141,7 +139,7 @@ public class MultiWebCrawler {
 	 * finished. Necessary to prevent our code from running forever in the
 	 * background.
 	 */
-	public synchronized void shutdown() {
+	public void shutdown() {
 		logger.debug("Shutting down");
 		minions.finish();
 		minions.shutdown();

@@ -31,9 +31,9 @@ public class MultiQueryHelper {
 	private final TreeMap<String, ArrayList<SearchResult>> map;
 
 	// The inverted index of all words found in all files.
-	private final InvertedIndex index; // TODO MultiInvertedIndex
+	private final MultiInvertedIndex index;
 
-	public MultiQueryHelper(InvertedIndex index) {
+	public MultiQueryHelper(MultiInvertedIndex index) {
 		this.lock = new ReadWriteLock();
 		this.minions = new WorkQueue();
 
@@ -71,9 +71,9 @@ public class MultiQueryHelper {
 	 * @throws IOException
 	 */
 	public void toJSON(Path output) throws IOException {
-		lock.lockReadWrite(); // TODO read only
+		lock.lockReadOnly(); // read lock, since only reading shared data.
 		JSONWriter.writeSearchResults(output, map);
-		lock.unlockReadWrite();
+		lock.unlockReadOnly();
 	}
 
 	/**
@@ -101,29 +101,14 @@ public class MultiQueryHelper {
 				words = line.split("\\s+");
 				Arrays.sort(words);
 				line = String.join(" ", words);
-				
-				/* TODO Reduce repeated code
+
+				// Efficiency issue fixed where search was inside put()
+				// inside lock, also fixed duplicate code with ternary operator.
 				ArrayList<SearchResult> current = (exact) ? index.exactSearch(words) : index.partialSearch(words);
 				lock.lockReadWrite();
 				map.put(line, current);
 				lock.unlockReadWrite();
-				*/
-				
-				
-				if (exact == true) {
-					// Efficiency issue fixed where search was inside put()
-					// inside lock.
-					ArrayList<SearchResult> current = index.exactSearch(words);
-					lock.lockReadWrite();
-					map.put(line, current);
-					lock.unlockReadWrite();
 
-				} else {
-					ArrayList<SearchResult> current = index.partialSearch(words);
-					lock.lockReadWrite();
-					map.put(line, current);
-					lock.unlockReadWrite();
-				}
 			} catch (Exception e) {
 				logger.warn("Unable to parse {}", line);
 				logger.catching(Level.DEBUG, e);
@@ -138,7 +123,7 @@ public class MultiQueryHelper {
 	 * finished. Necessary to prevent our code from running forever in the
 	 * background.
 	 */
-	public synchronized void shutdown() { // TODO remove synchronized
+	public void shutdown() {
 		logger.debug("Shutting down");
 		minions.finish();
 		minions.shutdown();

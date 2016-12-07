@@ -38,16 +38,12 @@ public class Driver {
 	public static void main(String[] args) {
 
 		ArgumentParser parser = new ArgumentParser(args);
-		InvertedIndex index;
-		QueryHelper qHelp;
-		MultiQueryHelper mqHelp;
-
 		int threads = 5;
 
 		if (parser.hasFlag("-multi")) {
 
-			index = new MultiInvertedIndex();
-			mqHelp = new MultiQueryHelper(index);
+			MultiInvertedIndex index = new MultiInvertedIndex();
+			MultiQueryHelper qHelp = new MultiQueryHelper(index);
 
 			threads = parser.getValue("-multi", threads);
 			threads = threads < 1 ? 1 : threads;
@@ -88,8 +84,8 @@ public class Driver {
 			if (parser.hasFlag("-exact")) {
 				try {
 					Path file = Paths.get(parser.getValue("-exact"));
-					mqHelp.parseQuery(file, true);
-					mqHelp.shutdown();
+					qHelp.parseQuery(file, true);
+					qHelp.shutdown();
 				} catch (IOException e) {
 					System.err.println("Unable to use path.");
 				} catch (NullPointerException e) {
@@ -102,8 +98,8 @@ public class Driver {
 			if (parser.hasFlag("-query")) {
 				try {
 					Path file = Paths.get(parser.getValue("-query"));
-					mqHelp.parseQuery(file, false);
-					mqHelp.shutdown();
+					qHelp.parseQuery(file, false);
+					qHelp.shutdown();
 				} catch (IOException e) {
 					System.err.println("Unable to use path.");
 				} catch (NullPointerException e) {
@@ -116,7 +112,7 @@ public class Driver {
 			if (parser.hasFlag("-results")) {
 				try {
 					Path outFile = Paths.get(parser.getValue("-results", "results.json"));
-					mqHelp.toJSON(outFile);
+					qHelp.toJSON(outFile);
 				} catch (IOException e) {
 					System.err.println("Unable to use path.");
 				} catch (NullPointerException e) {
@@ -129,8 +125,8 @@ public class Driver {
 
 		else {
 
-			index = new InvertedIndex();
-			qHelp = new QueryHelper(index);
+			InvertedIndex index = new InvertedIndex();
+			QueryHelper qHelp = new QueryHelper(index);
 
 			if (parser.hasFlag("-dir")) {
 				try {
@@ -202,35 +198,28 @@ public class Driver {
 			}
 		}
 	}
-	
-	/* TODO
+
+	/*
+	 * TODO
 	 * 
-	 * InvertedIndex index = null;
-	 * QueryResultsInterface query = null;
-	 * WorkQueue queue = null; // pass around the work queue to your multithreaded code instead of the number of threads
+	 * InvertedIndex index = null; QueryResultsInterface query = null; WorkQueue
+	 * queue = null; // pass around the work queue to your multithreaded code
+	 * instead of the number of threads
 	 * 
-	 * if (-multi) {
-	 * 		MultiInvertedIndex multi = new MultiInvertedIndex();
-	 * 		index = multi;
+	 * if (-multi) { MultiInvertedIndex multi = new MultiInvertedIndex(); index
+	 * = multi;
 	 * 
-	 * 		queue = new WorkQueue(threads)
+	 * queue = new WorkQueue(threads)
 	 * 
-	 * 		query = new MultiQueryHelper(multi, queue);
-	 * }
-	 * else {
-	 * 		index = new InvertedIndex();
-	 * 		query = new QueryHelper(index);
-	 * }
+	 * query = new MultiQueryHelper(multi, queue); } else { index = new
+	 * InvertedIndex(); query = new QueryHelper(index); }
 	 * 
 	 * 
-	 * if (-query) {
-	 * 		query.parseQuery(path, false); // for the multithreaded version, it should call finish()
-	 * }
+	 * if (-query) { query.parseQuery(path, false); // for the multithreaded
+	 * version, it should call finish() }
 	 * 
 	 * 
-	 * if (queue != null) {
-	 * 		queue.shutdown();
-	 * }
+	 * if (queue != null) { queue.shutdown(); }
 	 * 
 	 */
 }

@@ -11,11 +11,11 @@ public class MultiInvertedIndexBuilder {
 
 	private static final Logger logger = LogManager.getLogger();
 
-	private final InvertedIndex index; // TODO Make this a MultiInvertedIndex instead
+	private final MultiInvertedIndex index;
 
 	private final WorkQueue minions;
 
-	public MultiInvertedIndexBuilder(InvertedIndex index, int threads) { // TODO MultiInvertedIndex
+	public MultiInvertedIndexBuilder(MultiInvertedIndex index, int threads) {
 		this.index = index;
 		this.minions = new WorkQueue(threads);
 	}
@@ -64,7 +64,6 @@ public class MultiInvertedIndexBuilder {
 		@Override
 		public void run() {
 			try {
-				// InvertedIndexBuilder.parseFile(file, index);
 				InvertedIndex local = new InvertedIndex();
 				InvertedIndexBuilder.parseFile(file, local);
 				index.addAll(local);
@@ -77,7 +76,7 @@ public class MultiInvertedIndexBuilder {
 		}
 	}
 
-	public synchronized void shutdown() { // TODO remove synchronized
+	public void shutdown() {
 		logger.debug("Shutting down");
 		minions.finish();
 		minions.shutdown();
