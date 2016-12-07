@@ -10,10 +10,12 @@ import java.util.Set;
  * Crawls links starting from a seed URL in a breadth-first search fashion and
  * sends all words found to an InvertedIndex to be added in.
  */
-public class WebCrawler {
+public class WebCrawler implements WebCrawlerInterface {
 
 	private final InvertedIndex index;
-	private final LinkedList<String> queue; // TODO Could store URL objects here, and return URLs in your link parser
+	private final LinkedList<String> queue; // TODO Could store URL objects
+											// here, and return URLs in your
+											// link parser
 	private final Set<String> urls;
 
 	/**
@@ -53,47 +55,17 @@ public class WebCrawler {
 		while (!queue.isEmpty()) {
 			String current = queue.remove();
 			String html = HTTPFetcher.fetchHTML(current);
-			sendToIndex(html, current);
+			WebCrawlerInterface.sendToIndex(html, current, index);
 			ArrayList<String> links = LinkParser.listLinks(html, current);
 
 			for (String link : links) {
-				if (!urls.contains(link) && urls.size() != 50) {
+				if (urls.size() >= 50) {
+					break;
+				} else if (!urls.contains(link) && urls.size() != 50) {
 					urls.add(link);
 					queue.add(link);
 				}
-				
-				/*
-				if (urls.size() >= 50) {
-					break;
-				}
-				else if (!urls.contains(link)) {
-					add to queue and set
-				}
-				*/
 			}
-		}
-	}
-
-	// TODO Make this a static method that is added to the interface
-	// TODO public static void addHTML(String link, String html, InvertedIndex index)
-	
-	/**
-	 * Takes in HTML and that html's absolute URL and sends each word's name,
-	 * file that it is found in, and position within the file to the
-	 * InvertedIndex to be added in.
-	 * 
-	 * @param html
-	 *            The HTML containing the words that this method will grab.
-	 * @param link
-	 *            The web-page's URL name that the word is found in.
-	 */
-	private void sendToIndex(String html, String link) {
-		String[] words = HTMLCleaner.fetchHTMLWords(html);
-		int position = 1;
-
-		for (String word : words) {
-			index.add(word, link, position);
-			position++;
 		}
 	}
 }

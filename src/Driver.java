@@ -2,8 +2,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-// TODO Project 4.1 Code Review
-
 /**
  * Goes through a given directory and documents all words in every text file
  * within that directory. Documents by storing each word, its file, and its
@@ -199,27 +197,34 @@ public class Driver {
 		}
 	}
 
-	/*
-	 * TODO
+	/* TODO
 	 * 
-	 * InvertedIndex index = null; QueryResultsInterface query = null; WorkQueue
-	 * queue = null; // pass around the work queue to your multithreaded code
-	 * instead of the number of threads
+	 * InvertedIndex index = null;
+	 * QueryResultsInterface query = null;
+	 * WorkQueue queue = null; // pass around the work queue to your multithreaded code instead of the number of threads
 	 * 
-	 * if (-multi) { MultiInvertedIndex multi = new MultiInvertedIndex(); index
-	 * = multi;
+	 * if (-multi) {
+	 * 		MultiInvertedIndex multi = new MultiInvertedIndex();
+	 * 		index = multi;
 	 * 
-	 * queue = new WorkQueue(threads)
+	 * 		queue = new WorkQueue(threads)
 	 * 
-	 * query = new MultiQueryHelper(multi, queue); } else { index = new
-	 * InvertedIndex(); query = new QueryHelper(index); }
+	 * 		query = new MultiQueryHelper(multi, queue);
+	 * }
+	 * else {
+	 * 		index = new InvertedIndex();
+	 * 		query = new QueryHelper(index);
+	 * }
 	 * 
 	 * 
-	 * if (-query) { query.parseQuery(path, false); // for the multithreaded
-	 * version, it should call finish() }
+	 * if (-query) {
+	 * 		query.parseQuery(path, false); // for the multithreaded version, it should call finish()
+	 * }
 	 * 
 	 * 
-	 * if (queue != null) { queue.shutdown(); }
+	 * if (queue != null) {
+	 * 		queue.shutdown();
+	 * }
 	 * 
 	 */
 }

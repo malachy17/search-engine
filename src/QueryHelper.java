@@ -14,7 +14,7 @@ import java.util.TreeMap;
  * InvertedIndex and fill up the map with queries and their respective list of
  * SearchResult objects.
  */
-public class QueryHelper {
+public class QueryHelper implements QueryHelperInterface {
 
 	// A map to store query searches to a list of SearchResult objects.
 	private final TreeMap<String, ArrayList<SearchResult>> map;

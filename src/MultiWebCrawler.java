@@ -10,13 +10,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// TODO Create an interface here too
-
 /**
  * Crawls links starting from a seed URL in a breadth-first search fashion and
  * sends all words found to an InvertedIndex to be added in.
  */
-public class MultiWebCrawler {
+public class MultiWebCrawler implements WebCrawlerInterface {
 
 	private static final Logger logger = LogManager.getLogger();
 
@@ -65,11 +63,13 @@ public class MultiWebCrawler {
 		while (!queue.isEmpty()) {
 			String current = queue.remove();
 			String html = HTTPFetcher.fetchHTML(current);
-			minions.execute(new Minion(html, current));
+			minions.execute(new Minion(html, current, index));
 			ArrayList<String> links = LinkParser.listLinks(html, current);
 
 			for (String link : links) {
-				if (!urls.contains(link) && urls.size() != 50) {
+				if (urls.size() >= 50) {
+					break;
+				} else if (!urls.contains(link) && urls.size() != 50) {
 					urls.add(link);
 					queue.add(link);
 				}
@@ -83,27 +83,6 @@ public class MultiWebCrawler {
 	}
 
 	/**
-	 * Takes in HTML and that html's absolute URL and sends each word's name,
-	 * file that it is found in, and position within the file to the
-	 * InvertedIndex to be added in.
-	 * 
-	 * @param html
-	 *            The HTML containing the words that this method will grab.
-	 * @param link
-	 *            The web-page's URL name that the word is found in.
-	 */
-	private void sendToIndex(String html, String link) {
-		logger.debug("sendToIndex(): Sending {} to the index.", link);
-		String[] words = HTMLCleaner.fetchHTMLWords(html);
-		int position = 1;
-
-		for (String word : words) {
-			index.add(word, link, position);
-			position++;
-		}
-	}
-
-	/**
 	 * Handles per-directory parsing. If a subdirectory is encountered, a new
 	 * {@link Minion} is created to handle that subdirectory.
 	 */
@@ -111,11 +90,13 @@ public class MultiWebCrawler {
 
 		private String html;
 		private String link;
+		private InvertedIndex index;
 
-		public Minion(String html, String link) {
+		public Minion(String html, String link, InvertedIndex index) {
 			logger.debug("Minion created for {}", link);
 			this.html = html;
 			this.link = link;
+			this.index = index;
 		}
 
 		@Override
@@ -125,7 +106,7 @@ public class MultiWebCrawler {
 				// TODO parsing of links
 				// TODO adding to index (local index here too)
 
-				sendToIndex(html, link);
+				WebCrawlerInterface.sendToIndex(html, link, index);
 			} catch (Exception e) {
 				logger.catching(Level.DEBUG, e);
 			}

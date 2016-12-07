@@ -11,8 +11,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// TODO Create a QueryHelperInterface and implement it in both your multi- and single-threaded query helpers
-
 /**
  * A class that contains both a map of queries to SearchResult objects and an
  * index that is used as the database to search the queries in. It also contains
@@ -20,7 +18,7 @@ import org.apache.logging.log4j.Logger;
  * InvertedIndex and fill up the map with queries and their respective list of
  * SearchResult objects.
  */
-public class MultiQueryHelper {
+public class MultiQueryHelper implements QueryHelperInterface {
 
 	private static final Logger logger = LogManager.getLogger();
 	private final ReadWriteLock lock;
