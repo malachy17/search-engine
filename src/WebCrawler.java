@@ -74,6 +74,9 @@ public class WebCrawler {
 		}
 	}
 
+	// TODO Make this a static method that is added to the interface
+	// TODO public static void addHTML(String link, String html, InvertedIndex index)
+	
 	/**
 	 * Takes in HTML and that html's absolute URL and sends each word's name,
 	 * file that it is found in, and position within the file to the
