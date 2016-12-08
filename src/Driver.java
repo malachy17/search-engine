@@ -64,6 +64,8 @@ public class Driver {
 			builder = new InvertedIndexBuilder(index);
 			crawler = new WebCrawler(index);
 		}
+		
+		// TODO Remove all the finish calls here, and move them into the multithread methods
 
 		if (parser.hasFlag("-dir")) {
 			try {

@@ -46,6 +46,7 @@ public class MultiInvertedIndexBuilder implements InvertedIndexBuilderInterface 
 			logger.warn("Unable to traverse {}", path);
 			logger.catching(Level.DEBUG, e);
 		}
+		// TODO minions.finish();
 	}
 
 	/**

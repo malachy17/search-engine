@@ -13,9 +13,7 @@ import java.util.Set;
 public class WebCrawler implements WebCrawlerInterface {
 
 	private final InvertedIndex index;
-	private final LinkedList<String> queue; // TODO Could store URL objects
-											// here, and return URLs in your
-											// link parser
+	private final LinkedList<String> queue;
 	private final Set<String> urls;
 
 	/**
