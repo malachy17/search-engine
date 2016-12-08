@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class MultiInvertedIndexBuilder {
+public class MultiInvertedIndexBuilder implements InvertedIndexBuilderInterface {
 
 	private static final Logger logger = LogManager.getLogger();
 
@@ -65,7 +65,7 @@ public class MultiInvertedIndexBuilder {
 		public void run() {
 			try {
 				InvertedIndex local = new InvertedIndex();
-				InvertedIndexBuilder.parseFile(file, local);
+				InvertedIndexBuilderInterface.parseFile(file, local);
 				index.addAll(local);
 			} catch (IOException e) {
 				logger.warn("Unable to parse {}", file);

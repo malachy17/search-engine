@@ -1,6 +1,4 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,7 +8,13 @@ import java.nio.file.Path;
  * and sends every word, the file it's found in, and it's position to the given
  * index for adding.
  */
-public class InvertedIndexBuilder {
+public class InvertedIndexBuilder implements InvertedIndexBuilderInterface {
+
+	private final InvertedIndex index;
+
+	public InvertedIndexBuilder(InvertedIndex index) {
+		this.index = index;
+	}
 
 	/**
 	 * Traverses a given directory and goes through every file. If the file ends
@@ -23,46 +27,14 @@ public class InvertedIndexBuilder {
 	 *            the inverted index to hand off to the parseFile method.
 	 * @throws IOException
 	 */
-	public static void traverse(Path path, InvertedIndex index) throws IOException {
+	public void traverse(Path path) throws IOException {
 		try (DirectoryStream<Path> listing = Files.newDirectoryStream(path)) {
 			for (Path file : listing) {
 				if (Files.isDirectory(file)) {
-					InvertedIndexBuilder.traverse(file, index);
+					traverse(file);
 				} else {
 					if (file.getFileName().toString().toLowerCase().endsWith(".txt")) {
-						InvertedIndexBuilder.parseFile(file, index);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Parses a given text file and the words in each line. Each legal word is
-	 * added to the given index.
-	 * 
-	 * @param input
-	 *            the file being parsed
-	 * @param index
-	 *            the InvertedIndex data structure that will add in each word.
-	 * @throws IOException
-	 */
-	public static void parseFile(Path input, InvertedIndex index) throws IOException {
-
-		try (BufferedReader reader = Files.newBufferedReader(input, Charset.forName("UTF-8"));) {
-			String line = null;
-			int position = 1;
-
-			String location = input.normalize().toString();
-
-			while ((line = reader.readLine()) != null) {
-				line = InvertedIndexBuilder.clean(line);
-				String[] words = line.split("\\s+");
-
-				for (String word : words) {
-					if (!word.isEmpty()) {
-						index.add(word.trim(), location, position);
-						position++;
+						InvertedIndexBuilderInterface.parseFile(file, index);
 					}
 				}
 			}
