@@ -61,7 +61,7 @@ public class WebCrawler implements WebCrawlerInterface {
 			for (String link : links) {
 				if (urls.size() >= 50) {
 					break;
-				} else if (!urls.contains(link) && urls.size() != 50) {
+				} else if (!urls.contains(link)) {
 					urls.add(link);
 					queue.add(link);
 				}

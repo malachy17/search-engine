@@ -3,7 +3,6 @@ import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 import org.apache.logging.log4j.Level;
@@ -19,7 +18,6 @@ public class MultiWebCrawler implements WebCrawlerInterface {
 	private static final Logger logger = LogManager.getLogger();
 
 	private final MultiInvertedIndex index;
-	private final LinkedList<String> queue; // TODO remove
 	private final Set<String> urls;
 
 	private final WorkQueue minions;
@@ -35,7 +33,6 @@ public class MultiWebCrawler implements WebCrawlerInterface {
 	 */
 	public MultiWebCrawler(MultiInvertedIndex index, WorkQueue minions) {
 		this.index = index;
-		this.queue = new LinkedList<>();
 		this.urls = new HashSet<>();
 
 		this.minions = minions;
@@ -58,28 +55,8 @@ public class MultiWebCrawler implements WebCrawlerInterface {
 	 */
 	public void addSeed(String seed) throws UnknownHostException, MalformedURLException, IOException {
 		urls.add(seed);
-		queue.add(seed);
-
-		while (!queue.isEmpty()) {
-			String current = queue.remove();
-			String html = HTTPFetcher.fetchHTML(current);
-			minions.execute(new Minion(html, current));
-			ArrayList<String> links = LinkParser.listLinks(html, current);
-
-			for (String link : links) {
-				if (urls.size() >= 50) {
-					break;
-				} else if (!urls.contains(link) && urls.size() != 50) {
-					urls.add(link);
-					queue.add(link);
-				}
-			}
-		}
-
-		/*
-		 * TODO urls.add(seed); minions.execute(new Minion(seed));
-		 * minions.finish();
-		 */
+		minions.execute(new Minion(seed));
+		minions.finish();
 	}
 
 	/**
@@ -88,28 +65,35 @@ public class MultiWebCrawler implements WebCrawlerInterface {
 	 */
 	private class Minion implements Runnable {
 
-		private String html;
-		private String link;
+		private String current;
 
-		public Minion(String html, String link) {
-			logger.debug("Minion created for {}", link);
-			this.html = html;
-			this.link = link;
+		public Minion(String current) {
+			logger.debug("Minion created for {}", current);
+			this.current = current;
 		}
 
 		@Override
 		public void run() {
 			try {
-				// TODO fetch of html
-				// TODO parsing of links
-				// TODO adding to index (local index here too)
+				String html = HTTPFetcher.fetchHTML(current);
+				ArrayList<String> links = LinkParser.listLinks(html, current);
+				for (String link : links) {
+					if (urls.size() >= 50) {
+						break;
+					} else if (!urls.contains(link)) {
+						urls.add(link);
+						minions.execute(new Minion(link));
+					}
+				}
 
-				WebCrawlerInterface.sendToIndex(html, link, index);
+				InvertedIndex local = new InvertedIndex();
+				WebCrawlerInterface.sendToIndex(html, current, local);
+				index.addAll(local);
 			} catch (Exception e) {
 				logger.catching(Level.DEBUG, e);
 			}
 
-			logger.debug("Minion finished {}", link);
+			logger.debug("Minion finished {}", current);
 		}
 	}
 

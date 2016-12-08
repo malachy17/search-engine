@@ -45,7 +45,7 @@ public class LinkParser {
 			throws UnknownHostException, MalformedURLException, IOException {
 
 		URL base = new URL(url);
-		ArrayList<String> links = new ArrayList<String>();
+		ArrayList<String> links = new ArrayList<>();
 
 		Pattern p = Pattern.compile(REGEX);
 		Matcher m = p.matcher(text);
