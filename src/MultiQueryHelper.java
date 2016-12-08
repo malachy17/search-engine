@@ -29,11 +29,12 @@ public class MultiQueryHelper implements QueryHelperInterface {
 	private final TreeMap<String, ArrayList<SearchResult>> map;
 
 	// The inverted index of all words found in all files.
+	// Changed reference from multi to normal to work with driver.
 	private final MultiInvertedIndex index;
 
-	public MultiQueryHelper(MultiInvertedIndex index) {
+	public MultiQueryHelper(MultiInvertedIndex index, WorkQueue minions) {
 		this.lock = new ReadWriteLock();
-		this.minions = new WorkQueue();
+		this.minions = minions;
 
 		this.index = index;
 		map = new TreeMap<>();

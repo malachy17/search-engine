@@ -33,12 +33,12 @@ public class MultiWebCrawler implements WebCrawlerInterface {
 	 *            The InvertedIndex object that words from sendToIndex() will be
 	 *            sent to.
 	 */
-	public MultiWebCrawler(MultiInvertedIndex index, int threads) {
+	public MultiWebCrawler(MultiInvertedIndex index, WorkQueue minions) {
 		this.index = index;
 		this.queue = new LinkedList<>();
 		this.urls = new HashSet<>();
 
-		this.minions = new WorkQueue(threads);
+		this.minions = minions;
 	}
 
 	/**

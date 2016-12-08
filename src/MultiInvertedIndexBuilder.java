@@ -15,9 +15,9 @@ public class MultiInvertedIndexBuilder {
 
 	private final WorkQueue minions;
 
-	public MultiInvertedIndexBuilder(MultiInvertedIndex index, int threads) {
+	public MultiInvertedIndexBuilder(MultiInvertedIndex index, WorkQueue minions) {
 		this.index = index;
-		this.minions = new WorkQueue(threads);
+		this.minions = minions;
 	}
 
 	/**

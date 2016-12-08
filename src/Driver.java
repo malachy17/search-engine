@@ -36,22 +36,24 @@ public class Driver {
 	public static void main(String[] args) {
 
 		ArgumentParser parser = new ArgumentParser(args);
-		int threads = 5;
 
 		if (parser.hasFlag("-multi")) {
 
-			MultiInvertedIndex index = new MultiInvertedIndex();
-			MultiQueryHelper qHelp = new MultiQueryHelper(index);
-
+			int threads = 5;
 			threads = parser.getValue("-multi", threads);
 			threads = threads < 1 ? 1 : threads;
+
+			WorkQueue queue = new WorkQueue(threads);
+			MultiInvertedIndex index = new MultiInvertedIndex();
+			MultiQueryHelper qHelp = new MultiQueryHelper(index, queue);
 
 			if (parser.hasFlag("-dir")) {
 				try {
 					Path path = Paths.get(parser.getValue("-dir"));
-					MultiInvertedIndexBuilder builder = new MultiInvertedIndexBuilder(index, threads);
+					MultiInvertedIndexBuilder builder = new MultiInvertedIndexBuilder(index, queue);
 					builder.traverse(path);
-					builder.shutdown();
+					// builder.shutdown();
+					queue.finish();
 				} catch (IOException e) {
 					System.err.println("Unable to traverse path.");
 				} catch (NullPointerException e) {
@@ -62,9 +64,10 @@ public class Driver {
 			if (parser.hasFlag("-url")) {
 				try {
 					String url = parser.getValue("-url");
-					MultiWebCrawler crawler = new MultiWebCrawler(index, threads);
+					MultiWebCrawler crawler = new MultiWebCrawler(index, queue);
 					crawler.addSeed(url);
-					crawler.shutdown();
+					// crawler.shutdown();
+					queue.finish();
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
 				}
@@ -83,7 +86,8 @@ public class Driver {
 				try {
 					Path file = Paths.get(parser.getValue("-exact"));
 					qHelp.parseQuery(file, true);
-					qHelp.shutdown();
+					// qHelp.shutdown();
+					queue.finish();
 				} catch (IOException e) {
 					System.err.println("Unable to use path.");
 				} catch (NullPointerException e) {
@@ -97,7 +101,8 @@ public class Driver {
 				try {
 					Path file = Paths.get(parser.getValue("-query"));
 					qHelp.parseQuery(file, false);
-					qHelp.shutdown();
+					// qHelp.shutdown();
+					queue.finish();
 				} catch (IOException e) {
 					System.err.println("Unable to use path.");
 				} catch (NullPointerException e) {
@@ -118,6 +123,10 @@ public class Driver {
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
+			}
+
+			if (queue != null) {
+				queue.shutdown();
 			}
 		}
 
@@ -196,35 +205,4 @@ public class Driver {
 			}
 		}
 	}
-
-	/* TODO
-	 * 
-	 * InvertedIndex index = null;
-	 * QueryResultsInterface query = null;
-	 * WorkQueue queue = null; // pass around the work queue to your multithreaded code instead of the number of threads
-	 * 
-	 * if (-multi) {
-	 * 		MultiInvertedIndex multi = new MultiInvertedIndex();
-	 * 		index = multi;
-	 * 
-	 * 		queue = new WorkQueue(threads)
-	 * 
-	 * 		query = new MultiQueryHelper(multi, queue);
-	 * }
-	 * else {
-	 * 		index = new InvertedIndex();
-	 * 		query = new QueryHelper(index);
-	 * }
-	 * 
-	 * 
-	 * if (-query) {
-	 * 		query.parseQuery(path, false); // for the multithreaded version, it should call finish()
-	 * }
-	 * 
-	 * 
-	 * if (queue != null) {
-	 * 		queue.shutdown();
-	 * }
-	 * 
-	 */
 }
