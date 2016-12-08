@@ -146,23 +146,7 @@ public class InvertedIndex {
 	 *            the other index.
 	 */
 	public void addAll(InvertedIndex other) {
-
-//		for (String word : other.index.keySet()) {
-//			if (!this.index.containsKey(word)) {
-//				this.index.put(word, new TreeMap<>());
-//			}
-//
-//			for (String file : other.index.get(word).keySet()) {
-//				if (this.index.get(word).get(file) == null) {
-//					index.get(word).put(file, new TreeSet<>());
-//				}
-//
-//				for (Integer position : other.index.get(word).get(file)) {
-//					this.index.get(word).get(file).add(position);
-//				}
-//			}
-//		}
-
+		
 		for (String word : other.index.keySet()) {
 			if (!this.index.containsKey(word)) {
 				this.index.put(word, other.index.get(word));

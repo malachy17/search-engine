@@ -41,6 +41,7 @@ public class InvertedIndexBuilder implements InvertedIndexBuilderInterface {
 		}
 	}
 
+	// TODO Move into interface
 	/**
 	 * For a given line: trims leading and trailing whitespace, converts all
 	 * letters to lower-case, and replaces all illegal chars such as punctuation
