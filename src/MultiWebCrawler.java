@@ -54,7 +54,9 @@ public class MultiWebCrawler implements WebCrawlerInterface {
 	 * @throws IOException
 	 */
 	public void addSeed(String seed) throws UnknownHostException, MalformedURLException, IOException {
-		urls.add(seed); // TODO synchronized (urls) { }
+		synchronized (urls) {
+			urls.add(seed);
+		}
 		minions.execute(new Minion(seed));
 		minions.finish();
 	}
@@ -77,14 +79,15 @@ public class MultiWebCrawler implements WebCrawlerInterface {
 			try {
 				String html = HTTPFetcher.fetchHTML(current);
 				ArrayList<String> links = LinkParser.listLinks(html, current);
-				
-				// TODO synchronized (urls) { } the entire for loop
-				for (String link : links) {
-					if (urls.size() >= 50) {
-						break;
-					} else if (!urls.contains(link)) {
-						urls.add(link);
-						minions.execute(new Minion(link));
+
+				synchronized (urls) {
+					for (String link : links) {
+						if (urls.size() >= 50) {
+							break;
+						} else if (!urls.contains(link)) {
+							urls.add(link);
+							minions.execute(new Minion(link));
+						}
 					}
 				}
 
@@ -97,17 +100,5 @@ public class MultiWebCrawler implements WebCrawlerInterface {
 
 			logger.debug("Minion finished {}", current);
 		}
-	}
-
-	// TODO Remove
-	/**
-	 * Will shutdown the work queue after all the current pending work is
-	 * finished. Necessary to prevent our code from running forever in the
-	 * background.
-	 */
-	public void shutdown() {
-		logger.debug("Shutting down");
-		minions.finish();
-		minions.shutdown();
 	}
 }

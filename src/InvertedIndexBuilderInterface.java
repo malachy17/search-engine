@@ -38,7 +38,7 @@ public interface InvertedIndexBuilderInterface {
 			String location = input.normalize().toString();
 
 			while ((line = reader.readLine()) != null) {
-				line = InvertedIndexBuilder.clean(line);
+				line = InvertedIndexBuilderInterface.clean(line);
 				String[] words = line.split("\\s+");
 
 				for (String word : words) {
@@ -49,6 +49,22 @@ public interface InvertedIndexBuilderInterface {
 				}
 			}
 		}
+	}
+
+	/**
+	 * For a given line: trims leading and trailing whitespace, converts all
+	 * letters to lower-case, and replaces all illegal chars such as punctuation
+	 * with empty strings.
+	 * 
+	 * @param line
+	 *            the line being cleaned.
+	 * @return the cleaned line.
+	 */
+	public static String clean(String line) {
+		line = line.trim();
+		line = line.toLowerCase();
+		line = line.replaceAll("\\p{Punct}+", "");
+		return line;
 	}
 
 }

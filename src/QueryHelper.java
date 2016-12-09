@@ -42,7 +42,7 @@ public class QueryHelper implements QueryHelperInterface {
 
 		try (BufferedReader reader = Files.newBufferedReader(file, Charset.forName("UTF-8"));) {
 			while ((line = reader.readLine()) != null) {
-				line = InvertedIndexBuilder.clean(line);
+				line = InvertedIndexBuilderInterface.clean(line);
 
 				String[] words = line.split("\\s+");
 				Arrays.sort(words);

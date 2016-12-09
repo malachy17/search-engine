@@ -64,14 +64,11 @@ public class Driver {
 			builder = new InvertedIndexBuilder(index);
 			crawler = new WebCrawler(index);
 		}
-		
-		// TODO Remove all the finish calls here, and move them into the multithread methods
 
 		if (parser.hasFlag("-dir")) {
 			try {
 				Path path = Paths.get(parser.getValue("-dir"));
 				builder.traverse(path);
-				queue.finish();
 			} catch (IOException e) {
 				System.err.println("Unable to traverse path.");
 			} catch (NullPointerException e) {
@@ -83,7 +80,6 @@ public class Driver {
 			try {
 				String url = parser.getValue("-url");
 				crawler.addSeed(url);
-				queue.finish();
 			} catch (Exception e) {
 				System.err.println(e.getMessage());
 			}
@@ -102,7 +98,6 @@ public class Driver {
 			try {
 				Path file = Paths.get(parser.getValue("-exact"));
 				query.parseQuery(file, true);
-				queue.finish();
 			} catch (IOException e) {
 				System.err.println("Unable to use path.");
 			} catch (NullPointerException e) {
@@ -116,7 +111,6 @@ public class Driver {
 			try {
 				Path file = Paths.get(parser.getValue("-query"));
 				query.parseQuery(file, false);
-				queue.finish();
 			} catch (IOException e) {
 				System.err.println("Unable to use path.");
 			} catch (NullPointerException e) {

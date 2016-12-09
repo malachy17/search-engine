@@ -59,6 +59,7 @@ public class MultiQueryHelper implements QueryHelperInterface {
 				minions.execute(new Minion(line, exact));
 			}
 		}
+		minions.finish();
 	}
 
 	/**
@@ -96,7 +97,7 @@ public class MultiQueryHelper implements QueryHelperInterface {
 			try {
 				// Put these in minion instead of parseQuery, because we want
 				// each minion to do the work.
-				line = InvertedIndexBuilder.clean(line);
+				line = InvertedIndexBuilderInterface.clean(line);
 				words = line.split("\\s+");
 				Arrays.sort(words);
 				line = String.join(" ", words);
@@ -115,17 +116,5 @@ public class MultiQueryHelper implements QueryHelperInterface {
 
 			logger.debug("Minion finished {}", line);
 		}
-	}
-
-	// TODO Remove
-	/**
-	 * Will shutdown the work queue after all the current pending work is
-	 * finished. Necessary to prevent our code from running forever in the
-	 * background.
-	 */
-	public void shutdown() {
-		logger.debug("Shutting down");
-		minions.finish();
-		minions.shutdown();
 	}
 }

@@ -40,21 +40,4 @@ public class InvertedIndexBuilder implements InvertedIndexBuilderInterface {
 			}
 		}
 	}
-
-	// TODO Move into interface
-	/**
-	 * For a given line: trims leading and trailing whitespace, converts all
-	 * letters to lower-case, and replaces all illegal chars such as punctuation
-	 * with empty strings.
-	 * 
-	 * @param line
-	 *            the line being cleaned.
-	 * @return the cleaned line.
-	 */
-	public static String clean(String line) {
-		line = line.trim();
-		line = line.toLowerCase();
-		line = line.replaceAll("\\p{Punct}+", "");
-		return line;
-	}
 }
