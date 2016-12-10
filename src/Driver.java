@@ -136,7 +136,8 @@ public class Driver {
 		if (parser.hasFlag("-port")) {
 			try {
 				int port = parser.getValue("-port", 8080);
-				SearchEngineServer.startUp(port, index);
+				SearchEngineServer server = new SearchEngineServer(port, index);
+				server.startUp();
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
