@@ -21,6 +21,9 @@ public class SearchEngineServer {
 	public final int port;
 	private final InvertedIndex index;
 
+	private final String googleLogo = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
+	private final String twoPointZeroLogo = "https://smashingboxes.com/media/W1siZiIsIjIwMTUvMTAvMjAvMTAvNDEvNDgvOTE5L2FuZ3VsYXJfMi4wLnBuZyJdXQ/angular%202.0.png?sha=c182c65bfad4aa24";
+
 	public SearchEngineServer(int port, InvertedIndex index) {
 		this.port = port;
 		this.index = index;
@@ -39,7 +42,7 @@ public class SearchEngineServer {
 
 	@SuppressWarnings("serial")
 	private class SearchEngineServlet extends HttpServlet {
-		private static final String TITLE = "Messages";
+		private static final String TITLE = "Google 2.0";
 
 		// private ConcurrentLinkedQueue<String> results;
 		private ArrayList<SearchResult> results;
@@ -59,10 +62,14 @@ public class SearchEngineServer {
 
 			PrintWriter out = response.getWriter();
 			out.printf("<html>%n%n");
-			out.printf("<head><title>%s</title></head>%n", TITLE);
+			// out.printf("<head><title>%s</title></head>%n", TITLE);
+			out.printf("<head>");
+			out.printf("<title>%s</title>%n", TITLE);
+			out.printf("<style> body { background-color:#000000; </style>");
 			out.printf("<body>%n");
 
-			out.printf("<h1>Google 2.0</h1>%n%n");
+			out.printf("<h1><img src=\"%s\"/>%n", googleLogo);
+			out.printf("<img src=\"%s\" height=\"128\" width=\"128\" />%n</h1>", twoPointZeroLogo);
 
 			printForm(request, response);
 
