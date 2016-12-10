@@ -64,13 +64,13 @@ public class SearchEngineServer {
 
 			out.printf("<h1>Google 2.0</h1>%n%n");
 
+			printForm(request, response);
+
 			// Keep in mind multiple threads may access at once
 			for (SearchResult result : results) {
 				out.printf("<p><a href=\"%s\">%s</a></p>%n%n", result.getPath(), result.getPath());
 				out.printf("<p></p>");
 			}
-
-			printForm(request, response);
 
 			out.printf("%n</body>%n");
 			out.printf("</html>%n");
