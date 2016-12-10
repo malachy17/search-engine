@@ -71,6 +71,7 @@ public class JSONWriter {
 			writer.write("}" + END);
 		} catch (Exception e) {
 			System.err.println("Error in writeNestedObject");
+			System.err.println(e.getMessage());
 			logger.debug("Error", e);
 		}
 	}

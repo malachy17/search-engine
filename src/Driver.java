@@ -70,7 +70,7 @@ public class Driver {
 				Path path = Paths.get(parser.getValue("-dir"));
 				builder.traverse(path);
 			} catch (IOException e) {
-				System.err.println("Unable to traverse path.");
+				System.err.println("-dir: Unable to traverse path.");
 			} catch (NullPointerException e) {
 				System.err.println("Enter a directory after the \"dir\" flag.");
 			}
@@ -90,7 +90,7 @@ public class Driver {
 				Path outFile = Paths.get(parser.getValue("-index", "index.json"));
 				index.toJSON(outFile);
 			} catch (Exception e) {
-				System.err.println("Unable to write to path + outputFile.");
+				System.err.println("-index: Unable to write to path + outputFile.");
 			}
 		}
 
@@ -99,9 +99,9 @@ public class Driver {
 				Path file = Paths.get(parser.getValue("-exact"));
 				query.parseQuery(file, true);
 			} catch (IOException e) {
-				System.err.println("Unable to use path.");
+				System.err.println("-exact: Unable to use path.");
 			} catch (NullPointerException e) {
-				System.err.println("Some data was unretrievable.");
+				System.err.println("-exact: Some data was unretrievable.");
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
@@ -112,9 +112,9 @@ public class Driver {
 				Path file = Paths.get(parser.getValue("-query"));
 				query.parseQuery(file, false);
 			} catch (IOException e) {
-				System.err.println("Unable to use path.");
+				System.err.println("query: Unable to use path.");
 			} catch (NullPointerException e) {
-				System.err.println("Some data was unretrievable.");
+				System.err.println("query: Some data was unretrievable.");
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
@@ -125,9 +125,18 @@ public class Driver {
 				Path outFile = Paths.get(parser.getValue("-results", "results.json"));
 				query.toJSON(outFile);
 			} catch (IOException e) {
-				System.err.println("Unable to use path.");
+				System.err.println("-results: Unable to use path.");
 			} catch (NullPointerException e) {
-				System.err.println("Some data was unretrievable.");
+				System.err.println("-results: Some data was unretrievable.");
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
+
+		if (parser.hasFlag("-port")) {
+			try {
+				int port = parser.getValue("-port", 8080);
+				SearchEngineServer.startUp(port, index);
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
