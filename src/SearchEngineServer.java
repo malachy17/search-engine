@@ -1,12 +1,10 @@
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +18,6 @@ public class SearchEngineServer {
 
 	public final int port;
 	private final InvertedIndex index;
-	// private HashMap<String, String> history;
 
 	private final String googleLogo;
 	private final String twoPointZeroLogo;
@@ -37,8 +34,7 @@ public class SearchEngineServer {
 
 		ServletHandler handler = new ServletHandler();
 		handler.addServletWithMapping(new ServletHolder(new SearchEngineServlet()), "/");
-		// handler.addServletWithMapping(new ServletHolder(new
-		// HistoryServlet()), "/history");
+		handler.addServletWithMapping(new ServletHolder(new SearchHistoryServlet()), "/history");
 
 		server.setHandler(handler);
 		server.start();
@@ -86,7 +82,10 @@ public class SearchEngineServer {
 
 			String query = request.getParameter("query");
 			query = StringEscapeUtils.escapeHtml4(query);
-			// history.put(query, getDate());// TODO delete
+
+			if (request.getIntHeader("DNT") != 1) {
+				response.addCookie(new Cookie(query, CookieBaseServlet.getShortDate()));
+			}
 
 			InvertedIndexBuilderInterface.clean(query);
 			String[] words = query.split("\\s+");
@@ -128,11 +127,5 @@ public class SearchEngineServer {
 			out.printf("</body>%n");
 			out.printf("</html>%n");
 		}
-	}
-
-	private static String getDate() {
-		String format = "hh:mm a 'on' EEEE, MMMM dd yyyy";
-		DateFormat formatter = new SimpleDateFormat(format);
-		return formatter.format(new Date());
 	}
 }
