@@ -42,7 +42,7 @@ public class SearchHistoryServlet extends CookieBaseServlet {
 
 		Map<String, String> cookies = getCookieMap(request);
 		for (String cookie : cookies.keySet()) {
-			out.printf("<p>%s   |   %s</p>", cookie, cookies.get(cookie));
+			out.printf("<p>%s     |     %s</p>", cookie, cookies.get(cookie));
 		}
 
 		finishResponse(request, response);

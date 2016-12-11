@@ -34,7 +34,7 @@ public class SearchEngineServer {
 
 		ServletHandler handler = new ServletHandler();
 		handler.addServletWithMapping(new ServletHolder(new SearchEngineServlet()), "/");
-		handler.addServletWithMapping(new ServletHolder(new SearchHistoryServlet()), "/history");
+		handler.addServletWithMapping(new ServletHolder(new SearchHistoryServlet()), "/searchHistory");
 
 		server.setHandler(handler);
 		server.start();
@@ -122,6 +122,10 @@ public class SearchEngineServer {
 
 			out.printf("<p><input type=\"text\" name=\"query\" size=\"60\" maxlength=\"100\"/></p>%n");
 			out.printf("<p><input type=\"submit\" value=\"Search\"></p>\n%n");
+			out.printf("</form>%n");
+
+			out.printf("<form method=\"get\" action=\"%s\">%n", "searchHistory");
+			out.printf("\t<input type=\"submit\" value=\"Search History\">%n");
 			out.printf("</form>%n");
 
 			out.printf("</body>%n");
