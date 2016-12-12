@@ -21,12 +21,14 @@ public class SearchEngineServer {
 
 	private final String googleLogo;
 	private final String twoPointZeroLogo;
+	private boolean incognito;
 
 	public SearchEngineServer(int port, InvertedIndex index) {
 		this.port = port;
 		this.index = index;
 		this.googleLogo = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 		this.twoPointZeroLogo = "https://smashingboxes.com/media/W1siZiIsIjIwMTUvMTAvMjAvMTAvNDEvNDgvOTE5L2FuZ3VsYXJfMi4wLnBuZyJdXQ/angular%202.0.png?sha=c182c65bfad4aa24";
+		this.incognito = false;
 	}
 
 	public void startUp() throws Exception {
@@ -83,7 +85,11 @@ public class SearchEngineServer {
 			String query = request.getParameter("query");
 			query = StringEscapeUtils.escapeHtml4(query);
 
-			if (request.getIntHeader("DNT") != 1) {
+			if (request.getParameter("dontTrack") != null) {
+				incognito = incognito == false ? true : false;
+			}
+
+			if (incognito == false) {
 				response.addCookie(new Cookie(query, CookieBaseServlet.getShortDate()));
 			}
 
@@ -126,6 +132,14 @@ public class SearchEngineServer {
 
 			out.printf("<form method=\"get\" action=\"%s\">%n", "searchHistory");
 			out.printf("\t<input type=\"submit\" value=\"Search History\">%n");
+			out.printf("</form>%n");
+
+			out.printf("<form method=\"get\" action=\"%s\" name=\"dontTrack\">%n", "request.getRequestURI()");//
+			out.printf("\t<input type=\"submit\" value=\"Go Incognito\">%n");
+			out.printf("</form>%n");
+
+			out.printf("<form method=\"get\" action=\"%s\" name=\"exact\">%n", "request.getRequestURI()");//
+			out.printf("\t<input type=\"submit\" value=\"exact/partial\">%n");
 			out.printf("</form>%n");
 
 			out.printf("</body>%n");
