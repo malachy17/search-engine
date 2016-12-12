@@ -21,14 +21,19 @@ public class SearchEngineServer {
 
 	private final String googleLogo;
 	private final String twoPointZeroLogo;
+
 	private boolean incognito;
+	private boolean exact;
 
 	public SearchEngineServer(int port, InvertedIndex index) {
 		this.port = port;
 		this.index = index;
+
 		this.googleLogo = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png";
 		this.twoPointZeroLogo = "https://smashingboxes.com/media/W1siZiIsIjIwMTUvMTAvMjAvMTAvNDEvNDgvOTE5L2FuZ3VsYXJfMi4wLnBuZyJdXQ/angular%202.0.png?sha=c182c65bfad4aa24";
+
 		this.incognito = false;
+		this.exact = false;
 	}
 
 	public void startUp() throws Exception {
@@ -66,7 +71,12 @@ public class SearchEngineServer {
 			if (request.getParameter("dontTrack") != null) {
 				incognito = incognito == false ? true : false;
 			}
-			out.printf("<p><font color = \"white\">Incognito mode: %s</font></p>", incognito);
+			out.printf("<p><font color = \"white\">Incognito Mode: %s</font></p>", incognito);
+
+			if (request.getParameter("exact") != null) {
+				exact = exact == false ? true : false;
+			}
+			out.printf("<p><font color = \"white\">Exact Search: %s</font></p>", exact);
 
 			if (request.getParameter("query") != null) {
 				String query = request.getParameter("query");
@@ -76,7 +86,11 @@ public class SearchEngineServer {
 				String[] words = query.split("\\s+");
 				Arrays.sort(words);
 
-				results = index.partialSearch(words);
+				if (exact == true) {
+					results = index.exactSearch(words);
+				} else {
+					results = index.partialSearch(words);
+				}
 
 				// Keep in mind multiple threads may access at once
 				for (SearchResult result : results) {
@@ -121,8 +135,8 @@ public class SearchEngineServer {
 			out.printf("\t<input type=\"submit\" name=\"dontTrack\" value=\"Go Incognito\" >%n");
 			out.printf("</form>%n");
 
-			out.printf("<form method=\"get\" action=\"%s\" name=\"exact\">%n", request.getRequestURI());
-			out.printf("\t<input type=\"submit\" value=\"exact/partial\">%n");
+			out.printf("<form method=\"get\" action=\"%s\">%n", request.getRequestURI());
+			out.printf("\t<input type=\"submit\" name=\"exact\" value=\"Exact/Partial\">%n");
 			out.printf("</form>%n");
 
 			out.printf("</body>%n");
