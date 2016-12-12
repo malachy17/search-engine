@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,6 +41,7 @@ public class SearchEngineServer {
 		ServletHandler handler = new ServletHandler();
 		handler.addServletWithMapping(new ServletHolder(new SearchEngineServlet()), "/");
 		handler.addServletWithMapping(new ServletHolder(new SearchHistoryServlet()), "/searchHistory");
+		handler.addServletWithMapping(new ServletHolder(new VisitedResultsServlet()), "/visitedResults");
 
 		server.setHandler(handler);
 		server.start();
@@ -49,7 +49,7 @@ public class SearchEngineServer {
 	}
 
 	@SuppressWarnings("serial")
-	private class SearchEngineServlet extends HttpServlet {
+	private class SearchEngineServlet extends CookieBaseServlet {
 		private static final String TITLE = "Google 2.0";
 		private ArrayList<SearchResult> results;
 
@@ -99,7 +99,7 @@ public class SearchEngineServer {
 				}
 
 				if (incognito == false) {
-					response.addCookie(new Cookie(query, CookieBaseServlet.getShortDate()));
+					makeSearchHistoryCookie(request, response, query);
 				}
 			}
 
@@ -141,6 +141,38 @@ public class SearchEngineServer {
 
 			out.printf("</body>%n");
 			out.printf("</html>%n");
+		}
+
+		private void makeSearchHistoryCookie(HttpServletRequest request, HttpServletResponse response, String query) {
+			Cookie[] cookies = request.getCookies();
+
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if (cookie.getName().equals(SearchHistoryServlet.COOKIE_NAME)) {
+						String value = cookie.getValue();
+						cookie.setValue(value + "_" + query);
+						response.addCookie(cookie);
+						return;
+					}
+				}
+			}
+			response.addCookie(new Cookie(SearchHistoryServlet.COOKIE_NAME, query));
+		}
+
+		private void makeVisitedResultsCookie(HttpServletRequest request, HttpServletResponse response, String query) {
+			Cookie[] cookies = request.getCookies();
+
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if (cookie.getName().equals(VisitedResultsServlet.COOKIE_NAME)) {
+						String value = cookie.getValue();
+						cookie.setValue(value + "_" + query);
+						response.addCookie(cookie);
+						return;
+					}
+				}
+			}
+			response.addCookie(new Cookie(VisitedResultsServlet.COOKIE_NAME, query));
 		}
 	}
 }

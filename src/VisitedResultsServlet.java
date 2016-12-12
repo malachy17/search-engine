@@ -16,11 +16,11 @@ import javax.servlet.http.HttpServletResponse;
  * @see CookieConfigServlet
  */
 @SuppressWarnings("serial")
-public class SearchHistoryServlet extends CookieBaseServlet {
+public class VisitedResultsServlet extends CookieBaseServlet {
 
 	public static final String VISIT_DATE = "Visited";
 	public static final String VISIT_COUNT = "Count";
-	public static final String COOKIE_NAME = "searchHistory";
+	public static final String COOKIE_NAME = "visitedResults";
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
