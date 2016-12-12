@@ -60,14 +60,17 @@ public class SearchEngineServer {
 			response.setContentType("text/html");
 			response.setStatus(HttpServletResponse.SC_OK);
 
-			PrintWriter out = printStart(response);
 			printForm(request, response);
+			PrintWriter out = response.getWriter();
+
+			if (request.getParameter("dontTrack") != null) {
+				incognito = incognito == false ? true : false;
+			}
+			out.printf("<p><font color = \"white\">Incognito mode: %s</font></p>", incognito);
 
 			if (request.getParameter("query") != null) {
 				String query = request.getParameter("query");
 				query = StringEscapeUtils.escapeHtml4(query);
-
-				response.addCookie(new Cookie(query, CookieBaseServlet.getShortDate()));
 
 				InvertedIndexBuilderInterface.clean(query);
 				String[] words = query.split("\\s+");
@@ -80,6 +83,10 @@ public class SearchEngineServer {
 					out.printf("<p><center><a href=\"%s\">%s</a></center></p>%n%n", result.getPath(), result.getPath());
 					out.printf("<p><center></center></p>");
 				}
+
+				if (incognito == false) {
+					response.addCookie(new Cookie(query, CookieBaseServlet.getShortDate()));
+				}
 			}
 
 			out.printf("%n</body>%n");
@@ -88,7 +95,8 @@ public class SearchEngineServer {
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
 
-		private PrintWriter printStart(HttpServletResponse response) throws IOException {
+		private void printForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
 			PrintWriter out = response.getWriter();
 			out.printf("<html>%n%n");
 			out.printf("<head>");
@@ -99,18 +107,8 @@ public class SearchEngineServer {
 
 			out.printf("<h1><center><img src=\"%s\"/>%n", googleLogo);
 			out.printf("<img src=\"%s\" height=\"128\" width=\"128\" />%n</center></h1>", twoPointZeroLogo);
-			return out;
-		}
 
-		private void printForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-			PrintWriter out = response.getWriter();
 			out.printf("<form method=\"get\" action=\"%s\">%n", request.getServletPath());
-			out.printf("<html>%n");
-			out.printf("<head><title>%s</title>%n", TITLE);
-			out.printf("</head>");
-			out.printf("<body>%n");
-
 			out.printf("<p><center><input type=\"text\" name=\"query\" size=\"60\" maxlength=\"100\"/></center></p>%n");
 			out.printf("<p><center><input type=\"submit\" value=\"Search\"></center></p>\n%n");
 			out.printf("</form>%n");
@@ -119,11 +117,11 @@ public class SearchEngineServer {
 			out.printf("\t<input type=\"submit\" value=\"Search History\">%n");
 			out.printf("</form>%n");
 
-			out.printf("<form method=\"get\" action=\"%s\">%n", "request.getRequestURI()");//
+			out.printf("<form method=\"get\" action=\"%s\">%n", request.getRequestURI());
 			out.printf("\t<input type=\"submit\" name=\"dontTrack\" value=\"Go Incognito\" >%n");
 			out.printf("</form>%n");
 
-			out.printf("<form method=\"get\" action=\"%s\" name=\"exact\">%n", "request.getRequestURI()");//
+			out.printf("<form method=\"get\" action=\"%s\" name=\"exact\">%n", request.getRequestURI());
 			out.printf("\t<input type=\"submit\" value=\"exact/partial\">%n");
 			out.printf("</form>%n");
 
