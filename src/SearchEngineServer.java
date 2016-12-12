@@ -63,44 +63,29 @@ public class SearchEngineServer {
 			PrintWriter out = printStart(response);
 			printForm(request, response);
 
-			// Keep in mind multiple threads may access at once
-			for (SearchResult result : results) {
-				out.printf("<p><a href=\"%s\">%s</a></p>%n%n", result.getPath(), result.getPath());
-				out.printf("<p></p>");
+			if (request.getParameter("query") != null) {
+				String query = request.getParameter("query");
+				query = StringEscapeUtils.escapeHtml4(query);
+
+				response.addCookie(new Cookie(query, CookieBaseServlet.getShortDate()));
+
+				InvertedIndexBuilderInterface.clean(query);
+				String[] words = query.split("\\s+");
+				Arrays.sort(words);
+
+				results = index.partialSearch(words);
+
+				// Keep in mind multiple threads may access at once
+				for (SearchResult result : results) {
+					out.printf("<p><center><a href=\"%s\">%s</a></center></p>%n%n", result.getPath(), result.getPath());
+					out.printf("<p><center></center></p>");
+				}
 			}
 
 			out.printf("%n</body>%n");
 			out.printf("</html>%n");
 
 			response.setStatus(HttpServletResponse.SC_OK);
-		}
-
-		@Override
-		protected void doPost(HttpServletRequest request, HttpServletResponse response)
-				throws ServletException, IOException {
-
-			response.setContentType("text/html");
-			response.setStatus(HttpServletResponse.SC_OK);
-
-			String query = request.getParameter("query");
-			query = StringEscapeUtils.escapeHtml4(query);
-
-			if (request.getParameter("dontTrack") != null) {
-				incognito = incognito == false ? true : false;
-			}
-
-			if (incognito == false) {
-				response.addCookie(new Cookie(query, CookieBaseServlet.getShortDate()));
-			}
-
-			InvertedIndexBuilderInterface.clean(query);
-			String[] words = query.split("\\s+");
-			Arrays.sort(words);
-
-			results = index.partialSearch(words);
-
-			response.setStatus(HttpServletResponse.SC_OK);
-			response.sendRedirect(request.getServletPath());
 		}
 
 		private PrintWriter printStart(HttpServletResponse response) throws IOException {
@@ -112,30 +97,30 @@ public class SearchEngineServer {
 			out.printf("</head>");
 			out.printf("<body>%n");
 
-			out.printf("<h1><img src=\"%s\"/>%n", googleLogo);
-			out.printf("<img src=\"%s\" height=\"128\" width=\"128\" />%n</h1>", twoPointZeroLogo);
+			out.printf("<h1><center><img src=\"%s\"/>%n", googleLogo);
+			out.printf("<img src=\"%s\" height=\"128\" width=\"128\" />%n</center></h1>", twoPointZeroLogo);
 			return out;
 		}
 
 		private void printForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 			PrintWriter out = response.getWriter();
-			out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
+			out.printf("<form method=\"get\" action=\"%s\">%n", request.getServletPath());
 			out.printf("<html>%n");
 			out.printf("<head><title>%s</title>%n", TITLE);
 			out.printf("</head>");
 			out.printf("<body>%n");
 
-			out.printf("<p><input type=\"text\" name=\"query\" size=\"60\" maxlength=\"100\"/></p>%n");
-			out.printf("<p><input type=\"submit\" value=\"Search\"></p>\n%n");
+			out.printf("<p><center><input type=\"text\" name=\"query\" size=\"60\" maxlength=\"100\"/></center></p>%n");
+			out.printf("<p><center><input type=\"submit\" value=\"Search\"></center></p>\n%n");
 			out.printf("</form>%n");
 
 			out.printf("<form method=\"get\" action=\"%s\">%n", "searchHistory");
 			out.printf("\t<input type=\"submit\" value=\"Search History\">%n");
 			out.printf("</form>%n");
 
-			out.printf("<form method=\"get\" action=\"%s\" name=\"dontTrack\">%n", "request.getRequestURI()");//
-			out.printf("\t<input type=\"submit\" value=\"Go Incognito\">%n");
+			out.printf("<form method=\"get\" action=\"%s\">%n", "request.getRequestURI()");//
+			out.printf("\t<input type=\"submit\" name=\"dontTrack\" value=\"Go Incognito\" >%n");
 			out.printf("</form>%n");
 
 			out.printf("<form method=\"get\" action=\"%s\" name=\"exact\">%n", "request.getRequestURI()");//
