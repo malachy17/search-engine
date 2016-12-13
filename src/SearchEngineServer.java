@@ -29,6 +29,8 @@ public class SearchEngineServer {
 	private String thisloginTime;
 	private boolean alreadySentNewLoginCookie;
 
+	private boolean christmas;
+
 	public SearchEngineServer(int port, InvertedIndex index) {
 		this.port = port;
 		this.index = index;
@@ -42,6 +44,8 @@ public class SearchEngineServer {
 		this.lastLoginTime = null;
 		this.thisloginTime = CookieBaseServlet.getShortDate();
 		this.alreadySentNewLoginCookie = false;
+
+		this.christmas = false;
 	}
 
 	public void startUp() throws Exception {
@@ -74,6 +78,10 @@ public class SearchEngineServer {
 			response.setContentType("text/html");
 			response.setStatus(HttpServletResponse.SC_OK);
 
+			if (request.getParameter("christmas") != null) {
+				christmas = christmas == false ? true : false;
+			}
+
 			printForm(request, response);
 			PrintWriter out = response.getWriter();
 
@@ -97,6 +105,12 @@ public class SearchEngineServer {
 			if (request.getParameter("query") != null) {
 				String query = request.getParameter("query");
 				query = StringEscapeUtils.escapeHtml4(query);
+
+				if (query.equalsIgnoreCase("what should i listen to on christmas?")) {
+					out.printf("<h1><font color = \"white\"><center>Gloria in excelsis Deo</center></font></h1>");
+					out.println(
+							"<center><iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/q_GYlgFGF6k?autoplay=1\" frameborder=\"0\" allowfullscreen></iframe></center>");
+				}
 
 				InvertedIndexBuilderInterface.clean(query);
 				String[] words = query.split("\\s+");
@@ -142,6 +156,14 @@ public class SearchEngineServer {
 			out.printf("</head>");
 			out.printf("<body>%n");
 
+			if (christmas == true) {
+				out.println("<body style='background-color:#0C090A'>");
+				out.println("<div style='position: absolute; z-index:" + " -99; width: 100%; height: 100%'>");
+				out.println(
+						"<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/SrPEBaWQUOw?autoplay=1\" frameborder=\"0\" allowfullscreen></iframe>");
+				out.println("</div>");
+			}
+
 			out.printf("<h1><center><img src=\"%s\"/>%n", googleLogo);
 			out.printf("<img src=\"%s\" height=\"128\" width=\"128\" />%n</center></h1>", twoPointZeroLogo);
 
@@ -164,6 +186,10 @@ public class SearchEngineServer {
 
 			out.printf("<form method=\"get\" action=\"%s\">%n", request.getRequestURI());
 			out.printf("\t<input type=\"submit\" name=\"exact\" value=\"Exact/Partial\">%n");
+			out.printf("</form>%n");
+
+			out.printf("<form method=\"get\" action=\"%s\">%n", request.getRequestURI());
+			out.printf("\t<input type=\"submit\" name=\"christmas\" value=\"Christmas Theme\">%n");
 			out.printf("</form>%n");
 
 			out.printf("</body>%n");
