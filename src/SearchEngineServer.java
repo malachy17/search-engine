@@ -184,15 +184,15 @@ public class SearchEngineServer {
 			out.printf("<p><center><input type=\"submit\" value=\"Search\"></center></p>\n%n");
 			out.printf("</form>%n");
 
-			out.printf("<form method=\"get\" action=\"%s\">%n", "searchHistory");
+			out.printf("<form method=\"get\" target=\"_blank\" action=\"%s\">%n", "searchHistory");
 			out.printf("\t<input type=\"submit\" value=\"Search History\">%n");
 			out.printf("</form>%n");
 
-			out.printf("<form method=\"get\" action=\"%s\">%n", "visitedResults");
+			out.printf("<form method=\"get\" target=\"_blank\" action=\"%s\">%n", "visitedResults");
 			out.printf("\t<input type=\"submit\" value=\"Visited Results\">%n");
 			out.printf("</form>%n");
 
-			out.printf("<form method=\"get\" action=\"%s\">%n", "favorites");
+			out.printf("<form method=\"get\" target=\"_blank\" action=\"%s\">%n", "favorites");
 			out.printf("\t<input type=\"submit\" value=\"Favorites\">%n");
 			out.printf("</form>%n");
 
