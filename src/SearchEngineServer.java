@@ -112,7 +112,8 @@ public class SearchEngineServer {
 				query = StringEscapeUtils.escapeHtml4(query);
 
 				if (query.equalsIgnoreCase("what should i listen to on christmas?")) {
-					out.printf("<h1><font color = \"white\"><center>Gloria in excelsis Deo</center></font></h1>");
+					out.printf(
+							"<h1 style=\"font-family:cursive;\"><font color = \"gold\"><center>Gloria in excelsis Deo</center></font></h1>");
 					out.println(
 							"<center><iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/q_GYlgFGF6k?autoplay=1\" frameborder=\"0\" allowfullscreen></iframe></center>");
 				}
