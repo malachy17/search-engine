@@ -24,6 +24,10 @@ public class SearchEngineServer {
 	private boolean incognito;
 	private boolean exact;
 
+	private static final String COOKIE_NAME = "lastLogin";
+	private String thisloginTime;
+	private boolean alreadySentLoginCookie;
+
 	public SearchEngineServer(int port, InvertedIndex index) {
 		this.port = port;
 		this.index = index;
@@ -33,6 +37,9 @@ public class SearchEngineServer {
 
 		this.incognito = false;
 		this.exact = false;
+
+		this.thisloginTime = CookieBaseServlet.getShortDate();
+		this.alreadySentLoginCookie = false;
 	}
 
 	public void startUp() throws Exception {
@@ -68,6 +75,12 @@ public class SearchEngineServer {
 			printForm(request, response);
 			PrintWriter out = response.getWriter();
 
+			out.printf("<p><font color = \"white\">Last Login: %s</font></p>", getLastLoginCookie(request));
+			if (alreadySentLoginCookie == false) {
+				makeLastLoginCookie(request, response);
+				alreadySentLoginCookie = true;
+			}
+
 			if (request.getParameter("dontTrack") != null) {
 				incognito = incognito == false ? true : false;
 			}
@@ -92,6 +105,8 @@ public class SearchEngineServer {
 					results = index.partialSearch(words);
 				}
 
+				long startTime = System.nanoTime();
+
 				out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
 				for (SearchResult result : results) {
 					out.printf("<p><center><input type=\"submit\" name=\"url\" value=\"%s\"></center></p>\n%n",
@@ -99,8 +114,12 @@ public class SearchEngineServer {
 				}
 				out.printf("</form>%n");
 
+				long endTime = System.nanoTime();
+				out.printf("<p><font color = \"white\">%d results in %d nanoseconds.</font></p>", results.size(),
+						endTime - startTime);
+
 				if (incognito == false) {
-					makeCookie(request, response, query, SearchHistoryServlet.COOKIE_NAME);
+					makeCookie(request, response, SearchHistoryServlet.COOKIE_NAME, query);
 				}
 			}
 
@@ -148,7 +167,7 @@ public class SearchEngineServer {
 			out.printf("</html>%n");
 		}
 
-		private void makeCookie(HttpServletRequest request, HttpServletResponse response, String query, String name) {
+		private void makeCookie(HttpServletRequest request, HttpServletResponse response, String name, String query) {
 			Cookie[] cookies = request.getCookies();
 
 			if (cookies != null) {
@@ -163,6 +182,34 @@ public class SearchEngineServer {
 				}
 			}
 			response.addCookie(new Cookie(name, query + " : " + getShortDate()));
+		}
+
+		private void makeLastLoginCookie(HttpServletRequest request, HttpServletResponse response) {
+			Cookie[] cookies = request.getCookies();
+
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if (cookie.getName().equals(COOKIE_NAME)) {
+						cookie.setValue(thisloginTime);
+						response.addCookie(cookie);
+						return;
+					}
+				}
+			}
+			response.addCookie(new Cookie(COOKIE_NAME, thisloginTime));
+		}
+
+		private String getLastLoginCookie(HttpServletRequest request) {
+			Cookie[] cookies = request.getCookies();
+
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if (cookie.getName().equals(COOKIE_NAME)) {
+						return cookie.getValue();
+					}
+				}
+			}
+			return "This is your first time on.";
 		}
 
 		@Override
@@ -180,7 +227,7 @@ public class SearchEngineServer {
 			}
 
 			if (incognito == false) {
-				makeCookie(request, response, url, VisitedResultsServlet.COOKIE_NAME);
+				makeCookie(request, response, VisitedResultsServlet.COOKIE_NAME, url);
 			}
 
 			response.setStatus(HttpServletResponse.SC_OK);
