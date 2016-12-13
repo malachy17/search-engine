@@ -36,6 +36,7 @@ public class SearchHistoryServlet extends CookieBaseServlet {
 		prepareResponse("Search History", response);
 
 		PrintWriter out = response.getWriter();
+		out.printf("<h1>Search History</h1>%n");
 		out.printf("<p>To clear saved cookies, please press \"Clear\".</p>%n");
 		out.printf("%n");
 		out.printf("<form method=\"post\" action=\"%s\">%n", request.getRequestURI());

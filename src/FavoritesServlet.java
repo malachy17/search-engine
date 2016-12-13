@@ -36,6 +36,7 @@ public class FavoritesServlet extends CookieBaseServlet {
 		prepareResponse("Favorites", response);
 
 		PrintWriter out = response.getWriter();
+		out.printf("<h1>Favorites</h1>%n");
 		out.printf("<p>To clear saved cookies, please press \"Clear\".</p>%n");
 		out.printf("%n");
 		out.printf("<form method=\"post\" action=\"%s\">%n", request.getRequestURI());

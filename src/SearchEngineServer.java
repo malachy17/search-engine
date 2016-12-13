@@ -31,6 +31,8 @@ public class SearchEngineServer {
 
 	private boolean christmas;
 
+	private ReadWriteLock lock;
+
 	public SearchEngineServer(int port, InvertedIndex index) {
 		this.port = port;
 		this.index = index;
@@ -46,6 +48,8 @@ public class SearchEngineServer {
 		this.alreadySentNewLoginCookie = false;
 
 		this.christmas = false;
+
+		this.lock = new ReadWriteLock();
 	}
 
 	public void startUp() throws Exception {
@@ -117,11 +121,13 @@ public class SearchEngineServer {
 				String[] words = query.split("\\s+");
 				Arrays.sort(words);
 
+				lock.lockReadOnly();
 				if (exact == true) {
 					results = index.exactSearch(words);
 				} else {
 					results = index.partialSearch(words);
 				}
+				lock.unlockReadOnly();
 
 				long startTime = System.nanoTime();
 

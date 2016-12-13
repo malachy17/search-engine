@@ -73,7 +73,7 @@ public class CookieBaseServlet extends HttpServlet {
 		out.printf("<html>%n%n");
 		out.printf("<head>%n");
 		out.printf("\t<title>%s</title>%n", title);
-		out.printf("<style> body { background-color:#000000; } p {color:orange;} </style>");
+		out.printf("<style> body { background-color:#000000; } p {color:orange;} h1 {color:blue;} </style>");
 		out.printf("\t<meta http-equiv=\"Content-Type\" ");
 		out.printf("content=\"text/html;charset=utf-8\">%n");
 		out.printf("</head>%n%n");
