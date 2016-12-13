@@ -92,11 +92,12 @@ public class SearchEngineServer {
 					results = index.partialSearch(words);
 				}
 
-				// Keep in mind multiple threads may access at once
+				out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
 				for (SearchResult result : results) {
-					out.printf("<p><center><a href=\"%s\">%s</a></center></p>%n%n", result.getPath(), result.getPath());
-					out.printf("<p><center></center></p>");
+					out.printf("<p><center><input type=\"submit\" name=\"url\" value=\"%s\"></center></p>\n%n",
+							result.getPath());
 				}
+				out.printf("</form>%n");
 
 				if (incognito == false) {
 					makeSearchHistoryCookie(request, response, query);
@@ -129,6 +130,10 @@ public class SearchEngineServer {
 
 			out.printf("<form method=\"get\" action=\"%s\">%n", "searchHistory");
 			out.printf("\t<input type=\"submit\" value=\"Search History\">%n");
+			out.printf("</form>%n");
+
+			out.printf("<form method=\"get\" action=\"%s\">%n", "visitedResults");
+			out.printf("\t<input type=\"submit\" value=\"Visited Results\">%n");
 			out.printf("</form>%n");
 
 			out.printf("<form method=\"get\" action=\"%s\">%n", request.getRequestURI());
@@ -173,6 +178,28 @@ public class SearchEngineServer {
 				}
 			}
 			response.addCookie(new Cookie(VisitedResultsServlet.COOKIE_NAME, query));
+		}
+
+		@Override
+		protected void doPost(HttpServletRequest request, HttpServletResponse response)
+				throws ServletException, IOException {
+
+			response.setContentType("text/html");
+			response.setStatus(HttpServletResponse.SC_OK);
+
+			String url = request.getParameter("url");
+			url = StringEscapeUtils.escapeHtml4(url);
+
+			if (request.getParameter("dontTrack") != null) {
+				incognito = incognito == false ? true : false;
+			}
+
+			if (incognito == false) {
+				makeVisitedResultsCookie(request, response, url);
+			}
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.sendRedirect(url);
 		}
 	}
 }
