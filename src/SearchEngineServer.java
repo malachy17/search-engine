@@ -100,7 +100,7 @@ public class SearchEngineServer {
 				out.printf("</form>%n");
 
 				if (incognito == false) {
-					makeSearchHistoryCookie(request, response, query);
+					makeCookie(request, response, query, SearchHistoryServlet.COOKIE_NAME);
 				}
 			}
 
@@ -148,12 +148,12 @@ public class SearchEngineServer {
 			out.printf("</html>%n");
 		}
 
-		private void makeSearchHistoryCookie(HttpServletRequest request, HttpServletResponse response, String query) {
+		private void makeCookie(HttpServletRequest request, HttpServletResponse response, String query, String name) {
 			Cookie[] cookies = request.getCookies();
 
 			if (cookies != null) {
 				for (Cookie cookie : cookies) {
-					if (cookie.getName().equals(SearchHistoryServlet.COOKIE_NAME)) {
+					if (cookie.getName().equals(name)) {
 						String oldValue = cookie.getValue();
 						String newValue = query + " : " + getShortDate();
 						cookie.setValue(oldValue + "_" + newValue);
@@ -162,24 +162,7 @@ public class SearchEngineServer {
 					}
 				}
 			}
-			response.addCookie(new Cookie(SearchHistoryServlet.COOKIE_NAME, query + " : " + getShortDate()));
-		}
-
-		private void makeVisitedResultsCookie(HttpServletRequest request, HttpServletResponse response, String query) {
-			Cookie[] cookies = request.getCookies();
-
-			if (cookies != null) {
-				for (Cookie cookie : cookies) {
-					if (cookie.getName().equals(VisitedResultsServlet.COOKIE_NAME)) {
-						String oldValue = cookie.getValue();
-						String newValue = query + " : " + getShortDate();
-						cookie.setValue(oldValue + "_" + newValue);
-						response.addCookie(cookie);
-						return;
-					}
-				}
-			}
-			response.addCookie(new Cookie(VisitedResultsServlet.COOKIE_NAME, query + " : " + getShortDate()));
+			response.addCookie(new Cookie(name, query + " : " + getShortDate()));
 		}
 
 		@Override
@@ -197,7 +180,7 @@ public class SearchEngineServer {
 			}
 
 			if (incognito == false) {
-				makeVisitedResultsCookie(request, response, url);
+				makeCookie(request, response, url, VisitedResultsServlet.COOKIE_NAME);
 			}
 
 			response.setStatus(HttpServletResponse.SC_OK);
