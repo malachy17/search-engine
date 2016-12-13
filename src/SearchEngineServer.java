@@ -25,8 +25,9 @@ public class SearchEngineServer {
 	private boolean exact;
 
 	private static final String COOKIE_NAME = "lastLogin";
+	private String lastLoginTime;
 	private String thisloginTime;
-	private boolean alreadySentLoginCookie;
+	private boolean alreadySentNewLoginCookie;
 
 	public SearchEngineServer(int port, InvertedIndex index) {
 		this.port = port;
@@ -38,8 +39,9 @@ public class SearchEngineServer {
 		this.incognito = false;
 		this.exact = false;
 
+		this.lastLoginTime = null;
 		this.thisloginTime = CookieBaseServlet.getShortDate();
-		this.alreadySentLoginCookie = false;
+		this.alreadySentNewLoginCookie = false;
 	}
 
 	public void startUp() throws Exception {
@@ -75,21 +77,22 @@ public class SearchEngineServer {
 			printForm(request, response);
 			PrintWriter out = response.getWriter();
 
-			out.printf("<p><font color = \"white\">Last Login: %s</font></p>", getLastLoginCookie(request));
-			if (alreadySentLoginCookie == false) {
+			if (alreadySentNewLoginCookie == false) {
+				lastLoginTime = getLastLoginCookie(request);
 				makeLastLoginCookie(request, response);
-				alreadySentLoginCookie = true;
+				alreadySentNewLoginCookie = true;
 			}
+			out.printf("<p><font color = \"yellow\">Last Login: %s</font></p>", lastLoginTime);
 
 			if (request.getParameter("dontTrack") != null) {
 				incognito = incognito == false ? true : false;
 			}
-			out.printf("<p><font color = \"white\">Incognito Mode: %s</font></p>", incognito);
+			out.printf("<p><font color = \"orange\">Incognito Mode: %s</font></p>", incognito);
 
 			if (request.getParameter("exact") != null) {
 				exact = exact == false ? true : false;
 			}
-			out.printf("<p><font color = \"white\">Exact Search: %s</font></p>", exact);
+			out.printf("<p><font color = \"orange\">Exact Search: %s</font></p>", exact);
 
 			if (request.getParameter("query") != null) {
 				String query = request.getParameter("query");
@@ -115,7 +118,7 @@ public class SearchEngineServer {
 				out.printf("</form>%n");
 
 				long endTime = System.nanoTime();
-				out.printf("<p><font color = \"white\">%d results in %d nanoseconds.</font></p>", results.size(),
+				out.printf("<p><font color = \"yellow\">%d results in %d nanoseconds.</font></p>", results.size(),
 						endTime - startTime);
 
 				if (incognito == false) {
