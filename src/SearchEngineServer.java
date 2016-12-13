@@ -55,6 +55,7 @@ public class SearchEngineServer {
 		handler.addServletWithMapping(new ServletHolder(new SearchEngineServlet()), "/");
 		handler.addServletWithMapping(new ServletHolder(new SearchHistoryServlet()), "/searchHistory");
 		handler.addServletWithMapping(new ServletHolder(new VisitedResultsServlet()), "/visitedResults");
+		handler.addServletWithMapping(new ServletHolder(new FavoritesServlet()), "/favorites");
 
 		server.setHandler(handler);
 		server.start();
@@ -126,7 +127,8 @@ public class SearchEngineServer {
 
 				out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
 				for (SearchResult result : results) {
-					out.printf("<p><center><input type=\"submit\" name=\"url\" value=\"%s\"></center></p>\n%n",
+					out.printf("<p><center><input type=\"submit\" name=\"url\" value=\"%s\">   ", result.getPath());
+					out.printf("  <input type=\"submit\" name=\"like\" value=\"Like %s\"></center></p>\n%n",
 							result.getPath());
 				}
 				out.printf("</form>%n");
@@ -180,6 +182,10 @@ public class SearchEngineServer {
 			out.printf("\t<input type=\"submit\" value=\"Visited Results\">%n");
 			out.printf("</form>%n");
 
+			out.printf("<form method=\"get\" action=\"%s\">%n", "favorites");
+			out.printf("\t<input type=\"submit\" value=\"Favorites\">%n");
+			out.printf("</form>%n");
+
 			out.printf("<form method=\"get\" action=\"%s\">%n", request.getRequestURI());
 			out.printf("\t<input type=\"submit\" name=\"dontTrack\" value=\"Go Incognito\" >%n");
 			out.printf("</form>%n");
@@ -211,6 +217,23 @@ public class SearchEngineServer {
 				}
 			}
 			response.addCookie(new Cookie(name, query + " : " + getShortDate()));
+		}
+
+		private void makeFavoriteCookie(HttpServletRequest request, HttpServletResponse response, String name,
+				String query) {
+			Cookie[] cookies = request.getCookies();
+
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if (cookie.getName().equals(name)) {
+						String oldValue = cookie.getValue();
+						cookie.setValue(oldValue + "_" + query);
+						response.addCookie(cookie);
+						return;
+					}
+				}
+			}
+			response.addCookie(new Cookie(name, query));
 		}
 
 		private void makeLastLoginCookie(HttpServletRequest request, HttpServletResponse response) {
@@ -248,19 +271,30 @@ public class SearchEngineServer {
 			response.setContentType("text/html");
 			response.setStatus(HttpServletResponse.SC_OK);
 
-			String url = request.getParameter("url");
-			url = StringEscapeUtils.escapeHtml4(url);
+			if (request.getParameter("like") != null) {
+				String like = request.getParameter("like");
+				like = StringEscapeUtils.escapeHtml4(like);
 
-			if (request.getParameter("dontTrack") != null) {
-				incognito = incognito == false ? true : false;
+				makeFavoriteCookie(request, response, FavoritesServlet.COOKIE_NAME, like);
+
+				response.setStatus(HttpServletResponse.SC_OK);
+				response.sendRedirect(request.getServletPath());
+			} else {
+
+				String url = request.getParameter("url");
+				url = StringEscapeUtils.escapeHtml4(url);
+
+				if (request.getParameter("dontTrack") != null) {
+					incognito = incognito == false ? true : false;
+				}
+
+				if (incognito == false) {
+					makeCookie(request, response, VisitedResultsServlet.COOKIE_NAME, url);
+				}
+
+				response.setStatus(HttpServletResponse.SC_OK);
+				response.sendRedirect(url);
 			}
-
-			if (incognito == false) {
-				makeCookie(request, response, VisitedResultsServlet.COOKIE_NAME, url);
-			}
-
-			response.setStatus(HttpServletResponse.SC_OK);
-			response.sendRedirect(url);
 		}
 	}
 }

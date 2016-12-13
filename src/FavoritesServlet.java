@@ -16,11 +16,11 @@ import javax.servlet.http.HttpServletResponse;
  * @see CookieConfigServlet
  */
 @SuppressWarnings("serial")
-public class SearchHistoryServlet extends CookieBaseServlet {
+public class FavoritesServlet extends CookieBaseServlet {
 
 	public static final String VISIT_DATE = "Visited";
 	public static final String VISIT_COUNT = "Count";
-	public static final String COOKIE_NAME = "searchHistory";
+	public static final String COOKIE_NAME = "favorites";
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -33,7 +33,7 @@ public class SearchHistoryServlet extends CookieBaseServlet {
 			return;
 		}
 
-		prepareResponse("Search History", response);
+		prepareResponse("Favorites", response);
 
 		PrintWriter out = response.getWriter();
 		out.printf("<p>To clear saved cookies, please press \"Clear\".</p>%n");
@@ -47,7 +47,7 @@ public class SearchHistoryServlet extends CookieBaseServlet {
 			if (cookie.equals(COOKIE_NAME)) {
 				String[] queries = cookies.get(cookie).split("_");
 				for (String query : queries) {
-					out.printf("<p>%s</p>", query);
+					out.printf("<p><a href=%s>%s</a></p>", query.substring(5), query.substring(5));
 				}
 			}
 		}

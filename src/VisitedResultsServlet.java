@@ -33,7 +33,7 @@ public class VisitedResultsServlet extends CookieBaseServlet {
 			return;
 		}
 
-		prepareResponse("History", response);
+		prepareResponse("Visited Results", response);
 
 		PrintWriter out = response.getWriter();
 		out.printf("<p>To clear saved cookies, please press \"Clear\".</p>%n");
