@@ -127,8 +127,11 @@ public class SearchEngineServer {
 
 				out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
 				for (SearchResult result : results) {
-					out.printf("<p><center><input type=\"submit\" name=\"url\" value=\"%s\">   ", result.getPath());
-					out.printf("  <input type=\"submit\" name=\"like\" value=\"Like %s\"></center></p>\n%n",
+					out.printf(
+							"<p><center><input type=\"submit\" style=\"background-color:blue\" name=\"url\" value=\"%s\">   ",
+							result.getPath());
+					out.printf(
+							"  <input type=\"submit\" style=\"background-color:orange\" name=\"like\" value=\"Like %s\"></center></p>\n%n",
 							result.getPath());
 				}
 				out.printf("</form>%n");
@@ -195,7 +198,7 @@ public class SearchEngineServer {
 			out.printf("</form>%n");
 
 			out.printf("<form method=\"get\" action=\"%s\">%n", request.getRequestURI());
-			out.printf("\t<input type=\"submit\" name=\"christmas\" value=\"Christmas Theme\">%n");
+			out.printf("\t<input type=\"submit\" name=\"christmas\" value=\"Feel the Christmas Spirit!\">%n");
 			out.printf("</form>%n");
 
 			out.printf("</body>%n");
