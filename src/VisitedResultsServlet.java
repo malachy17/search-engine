@@ -47,7 +47,7 @@ public class VisitedResultsServlet extends CookieBaseServlet {
 			if (cookie.equals(COOKIE_NAME)) {
 				String[] queries = cookies.get(cookie).split("_");
 				for (String query : queries) {
-					out.printf("<p>%s     |     %s</p>", query, "hi");
+					out.printf("<p>%s</p>", query);
 				}
 			}
 		}

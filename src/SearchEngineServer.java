@@ -154,14 +154,15 @@ public class SearchEngineServer {
 			if (cookies != null) {
 				for (Cookie cookie : cookies) {
 					if (cookie.getName().equals(SearchHistoryServlet.COOKIE_NAME)) {
-						String value = cookie.getValue();
-						cookie.setValue(value + "_" + query);
+						String oldValue = cookie.getValue();
+						String newValue = query + " : " + getShortDate();
+						cookie.setValue(oldValue + "_" + newValue);
 						response.addCookie(cookie);
 						return;
 					}
 				}
 			}
-			response.addCookie(new Cookie(SearchHistoryServlet.COOKIE_NAME, query));
+			response.addCookie(new Cookie(SearchHistoryServlet.COOKIE_NAME, query + " : " + getShortDate()));
 		}
 
 		private void makeVisitedResultsCookie(HttpServletRequest request, HttpServletResponse response, String query) {
@@ -170,14 +171,15 @@ public class SearchEngineServer {
 			if (cookies != null) {
 				for (Cookie cookie : cookies) {
 					if (cookie.getName().equals(VisitedResultsServlet.COOKIE_NAME)) {
-						String value = cookie.getValue();
-						cookie.setValue(value + "_" + query);
+						String oldValue = cookie.getValue();
+						String newValue = query + " : " + getShortDate();
+						cookie.setValue(oldValue + "_" + newValue);
 						response.addCookie(cookie);
 						return;
 					}
 				}
 			}
-			response.addCookie(new Cookie(VisitedResultsServlet.COOKIE_NAME, query));
+			response.addCookie(new Cookie(VisitedResultsServlet.COOKIE_NAME, query + " : " + getShortDate()));
 		}
 
 		@Override
