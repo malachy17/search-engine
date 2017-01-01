@@ -1,6 +1,6 @@
 # Search Engine
 
-A search engine app written in Java that takes in a root directory (local or url) through a breadth-first search approach goes through up to 50 files. In each file it stores every word, that word's position within the file, and the file's name where the word is found in, into an inverted index. 
+A multithreaded search engine app written in Java that takes in a root directory (local or url) through a breadth-first search approach goes through up to 50 files. In each file it stores every word, that word's position within the file, and the file's name where the word is found in, into an inverted index. 
 
 A user can access the search engine through the web and just like a standard search engine, can enter queries into a search box to get a list of appropriate links to files displayed. Through buttons the user may turn on or off: partial search, exact search, and private browsing.
 
